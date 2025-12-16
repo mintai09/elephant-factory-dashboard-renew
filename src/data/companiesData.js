@@ -404,6 +404,283 @@ export const companiesKPI = {
   }
 };
 
+// 각 기업의 Tier 2 KPI 데이터 (5개 보조 지표)
+export const companiesTier2KPI = {
+  'comento': {
+    // KPI #4: 에너지 절감 효과 (E)
+    energySaving: {
+      monthly: 15800, // kWh
+      breakdown: {
+        pet: 650 * 13.9, // 9,035 kWh
+        hdpe: 150 * 12.5, // 1,875 kWh
+        mixedPlastic: 440 * 11.1 // 4,884 kWh
+      },
+      target: 15000,
+      grade: '우수'
+    },
+    // KPI #5: 협력 네트워크 확장도 (S)
+    partnerNetwork: {
+      activePartners: 12, // 개 (최근 3개월)
+      breakdown: {
+        corporate: 5, // 민간 기업
+        public: 3, // 공공기관
+        education: 3, // 교육기관
+        npo: 1 // 비영리단체
+      },
+      target: 10,
+      grade: '우수'
+    },
+    // KPI #6: 자원 가치 보존액 (G)
+    resourceValue: {
+      monthly: 620000, // 원 (1,240kg × 500원/kg)
+      unitPrice: 500, // 원/kg (혼합 플라스틱 재활용 원료 시장가격)
+      collected: 1240,
+      target: 500000,
+      grade: '우수'
+    },
+    // KPI #7: 교육 도달 범위 (S)
+    educationReach: {
+      score: 1500, // 점 (직접참여 120×10 + 간접참여 300×1)
+      directParticipation: 120, // 워크숍, 현장 교육
+      indirectParticipation: 300, // 온라인, 홍보
+      target: 1200,
+      grade: '우수'
+    },
+    // KPI #8: 업사이클링 부가가치율 (G)
+    upcyclingValue: {
+      rate: 420, // % ((제품 판매가 2,600 - 원료 가치 500) / 500 × 100)
+      productPrice: 2600, // 원/kg
+      materialCost: 500, // 원/kg
+      target: 400,
+      grade: '우수'
+    }
+  },
+  'sk-innovation': {
+    energySaving: {
+      monthly: 12500,
+      breakdown: {
+        pet: 420 * 13.9,
+        hdpe: 180 * 12.5,
+        mixedPlastic: 380 * 11.1
+      },
+      target: 15000,
+      grade: '양호'
+    },
+    partnerNetwork: {
+      activePartners: 9,
+      breakdown: {
+        corporate: 4,
+        public: 3,
+        education: 2,
+        npo: 0
+      },
+      target: 10,
+      grade: '양호'
+    },
+    resourceValue: {
+      monthly: 490000,
+      unitPrice: 500,
+      collected: 980,
+      target: 500000,
+      grade: '양호'
+    },
+    educationReach: {
+      score: 1250,
+      directParticipation: 100,
+      indirectParticipation: 250,
+      target: 1200,
+      grade: '우수'
+    },
+    upcyclingValue: {
+      rate: 400,
+      productPrice: 2500,
+      materialCost: 500,
+      target: 400,
+      grade: '우수'
+    }
+  },
+  'kewespo': {
+    energySaving: {
+      monthly: 10800,
+      breakdown: {
+        pet: 350 * 13.9,
+        hdpe: 130 * 12.5,
+        mixedPlastic: 370 * 11.1
+      },
+      target: 15000,
+      grade: '양호'
+    },
+    partnerNetwork: {
+      activePartners: 8,
+      breakdown: {
+        corporate: 3,
+        public: 3,
+        education: 2,
+        npo: 0
+      },
+      target: 10,
+      grade: '양호'
+    },
+    resourceValue: {
+      monthly: 425000,
+      unitPrice: 500,
+      collected: 850,
+      target: 500000,
+      grade: '양호'
+    },
+    educationReach: {
+      score: 1050,
+      directParticipation: 85,
+      indirectParticipation: 200,
+      target: 1200,
+      grade: '양호'
+    },
+    upcyclingValue: {
+      rate: 380,
+      productPrice: 2400,
+      materialCost: 500,
+      target: 400,
+      grade: '양호'
+    }
+  },
+  'posco': {
+    energySaving: {
+      monthly: 9200,
+      breakdown: {
+        pet: 280 * 13.9,
+        hdpe: 120 * 12.5,
+        mixedPlastic: 320 * 11.1
+      },
+      target: 15000,
+      grade: '기본'
+    },
+    partnerNetwork: {
+      activePartners: 6,
+      breakdown: {
+        corporate: 3,
+        public: 2,
+        education: 1,
+        npo: 0
+      },
+      target: 10,
+      grade: '기본'
+    },
+    resourceValue: {
+      monthly: 360000,
+      unitPrice: 500,
+      collected: 720,
+      target: 500000,
+      grade: '기본'
+    },
+    educationReach: {
+      score: 850,
+      directParticipation: 70,
+      indirectParticipation: 150,
+      target: 1200,
+      grade: '기본'
+    },
+    upcyclingValue: {
+      rate: 360,
+      productPrice: 2300,
+      materialCost: 500,
+      target: 400,
+      grade: '양호'
+    }
+  }
+};
+
+// 각 기업의 Tier 3 통합 KPI (ESG 임팩트 스코어)
+export const companiesTier3KPI = {
+  'comento': {
+    // E 점수 (100점 만점) = (탄소절감 × 0.5) + (에너지절감 × 0.2) + (순환성 × 0.3)
+    eScore: 88, // (50점 × 0.5) + (20점 × 0.2) + (30점 × 0.3) = 88점
+    eBreakdown: {
+      carbonReduction: 50, // 월 7.43 tonnes (목표 5.0 이상) → 50점
+      energySaving: 20, // 15,800 kWh (목표 15,000 이상) → 20점
+      circularity: 30 // 전환율 82% (목표 80% 이상) → 30점
+    },
+    // S 점수 (100점 만점) = (교육참여 × 0.5) + (협력기관 × 0.5)
+    sScore: 85, // (45점 × 0.5) + (40점 × 0.5) = 85점
+    sBreakdown: {
+      education: 45, // 교육 효과 지수 1500 (목표 1200 이상) → 45점
+      partnership: 40 // 협력 기관 12개 (목표 10 이상) → 40점
+    },
+    // G 점수 (100점 만점) = (자원가치 × 0.6) + (부가가치 × 0.4)
+    gScore: 82, // (42점 × 0.6) + (40점 × 0.4) = 82점
+    gBreakdown: {
+      resourceValue: 42, // 620,000원 (목표 500,000 이상) → 42점
+      upcyclingValue: 40 // 부가가치율 420% (목표 400% 이상) → 40점
+    },
+    // ESG 임팩트 스코어 (100점 만점) = (E × 0.5) + (S × 0.3) + (G × 0.2)
+    totalScore: 86, // (88 × 0.5) + (85 × 0.3) + (82 × 0.2) = 85.9 ≈ 86점
+    grade: 'S', // 80-100점 → S등급 (Superior)
+    gradeDescription: '탁월, 업계 최고 수준'
+  },
+  'sk-innovation': {
+    eScore: 78,
+    eBreakdown: {
+      carbonReduction: 45,
+      energySaving: 18,
+      circularity: 25
+    },
+    sScore: 80,
+    sBreakdown: {
+      education: 40,
+      partnership: 35
+    },
+    gScore: 75,
+    gBreakdown: {
+      resourceValue: 35,
+      upcyclingValue: 40
+    },
+    totalScore: 78, // (78 × 0.5) + (80 × 0.3) + (75 × 0.2) = 78.0점
+    grade: 'A', // 60-80점 → A등급 (Advanced)
+    gradeDescription: '우수, 선도적 활동'
+  },
+  'kewespo': {
+    eScore: 72,
+    eBreakdown: {
+      carbonReduction: 40,
+      energySaving: 15,
+      circularity: 23
+    },
+    sScore: 75,
+    sBreakdown: {
+      education: 35,
+      partnership: 32
+    },
+    gScore: 70,
+    gBreakdown: {
+      resourceValue: 32,
+      upcyclingValue: 35
+    },
+    totalScore: 72, // (72 × 0.5) + (75 × 0.3) + (70 × 0.2) = 72.5 ≈ 72점
+    grade: 'A', // 60-80점 → A등급 (Advanced)
+    gradeDescription: '우수, 선도적 활동'
+  },
+  'posco': {
+    eScore: 65,
+    eBreakdown: {
+      carbonReduction: 35,
+      energySaving: 12,
+      circularity: 20
+    },
+    sScore: 68,
+    sBreakdown: {
+      education: 30,
+      partnership: 28
+    },
+    gScore: 68,
+    gBreakdown: {
+      resourceValue: 28,
+      upcyclingValue: 35
+    },
+    totalScore: 66, // (65 × 0.5) + (68 × 0.3) + (68 × 0.2) = 66.5 ≈ 66점
+    grade: 'A', // 60-80점 → A등급 (Advanced)
+    gradeDescription: '우수, 선도적 활동'
+  }
+};
+
 // 각 기업의 캠페인 참여 내역
 export const companiesCampaigns = {
   'comento': [
@@ -709,6 +986,8 @@ export const getCompanyData = (companyId) => {
     info: company,
     performance: companiesPerformance[companyId],
     kpi: companiesKPI[companyId],
+    tier2KPI: companiesTier2KPI[companyId],  // 추가: Tier 2 KPI
+    tier3KPI: companiesTier3KPI[companyId],  // 추가: Tier 3 KPI
     campaigns: companiesCampaigns[companyId],
     cumulative: companiesCumulative[companyId],
     timeSeries: companiesTimeSeries[companyId],

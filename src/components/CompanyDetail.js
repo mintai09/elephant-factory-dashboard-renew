@@ -27,7 +27,7 @@ function CompanyDetail() {
     );
   }
 
-  const { info, performance, kpi, campaigns, cumulative, timeSeries, esgScores, media } = data;
+  const { info, performance, kpi, tier2KPI, tier3KPI, campaigns, cumulative, timeSeries, esgScores, media } = data;
 
   return (
     <div className="main-content">
@@ -409,6 +409,467 @@ function CompanyDetail() {
           </div>
         </div>
       </div>
+
+      {/* Tier 2 보조 KPI */}
+      {tier2KPI && (
+        <div className="section">
+          <h2 className="section-title">📊 Tier 2 보조 KPI (5개 지표)</h2>
+          <p className="section-subtitle">
+            분기별 측정 지표로 상세 분석 및 ESG 평가 대응에 활용됩니다.
+          </p>
+
+          {/* KPI #4: 에너지 절감 효과 */}
+          <div className="card" style={{ marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ fontSize: '2.5rem' }}>⚡</div>
+                <div>
+                  <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
+                    KPI #4. 에너지 절감 효과 (E)
+                  </h3>
+                  <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
+                    제품 생산 과정에서 절감되는 에너지량
+                  </div>
+                </div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>
+                  월 절감량
+                </div>
+                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#10B981' }}>
+                  {tier2KPI.energySaving.monthly.toLocaleString()} kWh
+                </div>
+                <div className={`badge badge-${tier2KPI.energySaving.grade === '우수' ? 'success' : 'info'}`} style={{ marginTop: '0.5rem' }}>
+                  {tier2KPI.energySaving.grade}
+                </div>
+              </div>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '1rem',
+              marginBottom: '1rem'
+            }}>
+              <div style={{ padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem' }}>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>PET 병</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#10B981' }}>
+                  {tier2KPI.energySaving.breakdown.pet.toLocaleString()} kWh
+                </div>
+              </div>
+              <div style={{ padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem' }}>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>HDPE 용기</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#10B981' }}>
+                  {tier2KPI.energySaving.breakdown.hdpe.toLocaleString()} kWh
+                </div>
+              </div>
+              <div style={{ padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem' }}>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>혼합 플라스틱</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#10B981' }}>
+                  {tier2KPI.energySaving.breakdown.mixedPlastic.toLocaleString()} kWh
+                </div>
+              </div>
+            </div>
+
+            <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', fontSize: '0.875rem' }}>
+              <strong>목표:</strong> 월 {tier2KPI.energySaving.target.toLocaleString()} kWh 이상 |
+              <strong style={{ marginLeft: '1rem' }}>Tier 3 기여도:</strong> E 점수의 20%
+            </div>
+          </div>
+
+          {/* KPI #5: 협력 네트워크 확장도 */}
+          <div className="card" style={{ marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ fontSize: '2.5rem' }}>🤝</div>
+                <div>
+                  <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
+                    KPI #5. 협력 네트워크 확장도 (S)
+                  </h3>
+                  <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
+                    최근 3개월 내 활동 협력 기관 수
+                  </div>
+                </div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>
+                  활동 협력기관
+                </div>
+                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#3B82F6' }}>
+                  {tier2KPI.partnerNetwork.activePartners}개
+                </div>
+                <div className={`badge badge-${tier2KPI.partnerNetwork.grade === '우수' ? 'success' : 'info'}`} style={{ marginTop: '0.5rem' }}>
+                  {tier2KPI.partnerNetwork.grade}
+                </div>
+              </div>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: '1rem',
+              marginBottom: '1rem'
+            }}>
+              <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#3B82F6' }}>
+                  {tier2KPI.partnerNetwork.breakdown.corporate}
+                </div>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>민간 기업</div>
+              </div>
+              <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#3B82F6' }}>
+                  {tier2KPI.partnerNetwork.breakdown.public}
+                </div>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>공공기관</div>
+              </div>
+              <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#3B82F6' }}>
+                  {tier2KPI.partnerNetwork.breakdown.education}
+                </div>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>교육기관</div>
+              </div>
+              <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#3B82F6' }}>
+                  {tier2KPI.partnerNetwork.breakdown.npo}
+                </div>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>비영리단체</div>
+              </div>
+            </div>
+
+            <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', fontSize: '0.875rem' }}>
+              <strong>목표:</strong> {tier2KPI.partnerNetwork.target}개 이상 |
+              <strong style={{ marginLeft: '1rem' }}>Tier 3 기여도:</strong> S 점수의 50%
+            </div>
+          </div>
+
+          {/* KPI #6: 자원 가치 보존액 */}
+          <div className="card" style={{ marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ fontSize: '2.5rem' }}>💰</div>
+                <div>
+                  <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
+                    KPI #6. 자원 가치 보존액 (G)
+                  </h3>
+                  <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
+                    순환 자원으로 전환된 경제적 가치
+                  </div>
+                </div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>
+                  월 보존액
+                </div>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#F59E0B' }}>
+                  {(tier2KPI.resourceValue.monthlyValue / 10000).toLocaleString()}만원
+                </div>
+                <div className={`badge badge-${tier2KPI.resourceValue.grade === '우수' ? 'success' : 'warning'}`} style={{ marginTop: '0.5rem' }}>
+                  {tier2KPI.resourceValue.grade}
+                </div>
+              </div>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '1rem',
+              marginBottom: '1rem'
+            }}>
+              <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>플라스틱 재자원화</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#F59E0B' }}>
+                  {(tier2KPI.resourceValue.breakdown.plastic / 10000).toLocaleString()}만원
+                </div>
+              </div>
+              <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>장난감 재사용</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#F59E0B' }}>
+                  {(tier2KPI.resourceValue.breakdown.toys / 10000).toLocaleString()}만원
+                </div>
+              </div>
+            </div>
+
+            <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', fontSize: '0.875rem' }}>
+              <strong>목표:</strong> 월 {(tier2KPI.resourceValue.target / 10000).toLocaleString()}만원 이상 |
+              <strong style={{ marginLeft: '1rem' }}>Tier 3 기여도:</strong> G 점수의 60%
+            </div>
+          </div>
+
+          {/* KPI #7: 교육 도달 범위 */}
+          <div className="card" style={{ marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ fontSize: '2.5rem' }}>📚</div>
+                <div>
+                  <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
+                    KPI #7. 교육 도달 범위 (S)
+                  </h3>
+                  <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
+                    교육 프로그램 참여 인원 가중 점수
+                  </div>
+                </div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>
+                  가중 점수
+                </div>
+                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#3B82F6' }}>
+                  {tier2KPI.educationReach.totalScore}점
+                </div>
+                <div className={`badge badge-${tier2KPI.educationReach.grade === '우수' ? 'success' : 'info'}`} style={{ marginTop: '0.5rem' }}>
+                  {tier2KPI.educationReach.grade}
+                </div>
+              </div>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: '1rem',
+              marginBottom: '1rem'
+            }}>
+              <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>임직원</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#3B82F6' }}>
+                  {tier2KPI.educationReach.breakdown.employees}명
+                </div>
+                <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>× 1.0배</div>
+              </div>
+              <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>협력사</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#3B82F6' }}>
+                  {tier2KPI.educationReach.breakdown.partners}명
+                </div>
+                <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>× 1.5배</div>
+              </div>
+              <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>지역사회</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#3B82F6' }}>
+                  {tier2KPI.educationReach.breakdown.community}명
+                </div>
+                <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>× 2.0배</div>
+              </div>
+            </div>
+
+            <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', fontSize: '0.875rem' }}>
+              <strong>목표:</strong> {tier2KPI.educationReach.target}점 이상 |
+              <strong style={{ marginLeft: '1rem' }}>Tier 3 기여도:</strong> S 점수의 50%
+            </div>
+          </div>
+
+          {/* KPI #8: 업사이클링 부가가치율 */}
+          <div className="card" style={{ marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ fontSize: '2.5rem' }}>🔄</div>
+                <div>
+                  <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
+                    KPI #8. 업사이클링 부가가치율 (G)
+                  </h3>
+                  <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
+                    원재료 대비 최종 제품 가치 상승률
+                  </div>
+                </div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>
+                  부가가치율
+                </div>
+                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#F59E0B' }}>
+                  {tier2KPI.upcyclingValue.valueAddedRate}%
+                </div>
+                <div className={`badge badge-${tier2KPI.upcyclingValue.grade === '우수' ? 'success' : 'warning'}`} style={{ marginTop: '0.5rem' }}>
+                  {tier2KPI.upcyclingValue.grade}
+                </div>
+              </div>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '1rem',
+              marginBottom: '1rem'
+            }}>
+              <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>원재료 가치</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#6B7280' }}>
+                  {(tier2KPI.upcyclingValue.breakdown.rawMaterialValue / 10000).toLocaleString()}만원
+                </div>
+              </div>
+              <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>최종 제품 가치</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#F59E0B' }}>
+                  {(tier2KPI.upcyclingValue.breakdown.finalProductValue / 10000).toLocaleString()}만원
+                </div>
+              </div>
+            </div>
+
+            <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', fontSize: '0.875rem' }}>
+              <strong>목표:</strong> {tier2KPI.upcyclingValue.target}% 이상 |
+              <strong style={{ marginLeft: '1rem' }}>Tier 3 기여도:</strong> G 점수의 40%
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tier 3 통합 KPI */}
+      {tier3KPI && (
+        <div className="section">
+          <h2 className="section-title">🏆 Tier 3 통합 KPI - ESG 임팩트 스코어</h2>
+          <p className="section-subtitle">
+            연간 평가 지표로 대외 공시 및 투자 유치에 활용됩니다. E(50%) + S(30%) + G(20%) 가중 평균
+          </p>
+
+          <div className="card" style={{ marginBottom: '2rem' }}>
+            {/* 총점 및 등급 */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '2rem',
+              background: tier3KPI.grade === 'S' ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' :
+                          tier3KPI.grade === 'A' ? 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)' :
+                          'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+              borderRadius: '1rem',
+              color: 'white',
+              marginBottom: '2rem'
+            }}>
+              <div>
+                <div style={{ fontSize: '1rem', opacity: 0.9, marginBottom: '0.5rem' }}>ESG 임팩트 스코어</div>
+                <div style={{ fontSize: '4rem', fontWeight: '700' }}>{tier3KPI.totalScore}점</div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{
+                  display: 'inline-block',
+                  padding: '1rem 2rem',
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '1rem',
+                  backdropFilter: 'blur(10px)'
+                }}>
+                  <div style={{ fontSize: '3rem', fontWeight: '700' }}>{tier3KPI.grade}</div>
+                  <div style={{ fontSize: '1rem', opacity: 0.9 }}>{tier3KPI.gradeDescription}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* E, S, G 상세 점수 */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '1.5rem'
+            }}>
+              {/* E 점수 */}
+              <div style={{
+                padding: '1.5rem',
+                backgroundColor: '#F0FDF4',
+                borderRadius: '1rem',
+                borderLeft: '4px solid #10B981'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', color: '#10B981' }}>🌍 E (환경)</h3>
+                  <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#10B981' }}>
+                    {tier3KPI.eScore}점
+                  </div>
+                </div>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '1rem' }}>
+                  가중치: 50% | 목표: 85점 이상
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.5rem' }}>
+                    <span>탄소 저감 (50%)</span>
+                    <strong style={{ color: '#10B981' }}>{tier3KPI.eBreakdown.carbonReduction}점</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.5rem' }}>
+                    <span>에너지 절감 (20%)</span>
+                    <strong style={{ color: '#10B981' }}>{tier3KPI.eBreakdown.energySaving}점</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.5rem' }}>
+                    <span>순환성 (30%)</span>
+                    <strong style={{ color: '#10B981' }}>{tier3KPI.eBreakdown.circularity}점</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* S 점수 */}
+              <div style={{
+                padding: '1.5rem',
+                backgroundColor: '#EFF6FF',
+                borderRadius: '1rem',
+                borderLeft: '4px solid #3B82F6'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', color: '#3B82F6' }}>🤝 S (사회)</h3>
+                  <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#3B82F6' }}>
+                    {tier3KPI.sScore}점
+                  </div>
+                </div>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '1rem' }}>
+                  가중치: 30% | 목표: 80점 이상
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.5rem' }}>
+                    <span>교육 참여 (50%)</span>
+                    <strong style={{ color: '#3B82F6' }}>{tier3KPI.sBreakdown.education}점</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.5rem' }}>
+                    <span>협력 기관 (50%)</span>
+                    <strong style={{ color: '#3B82F6' }}>{tier3KPI.sBreakdown.partnership}점</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* G 점수 */}
+              <div style={{
+                padding: '1.5rem',
+                backgroundColor: '#FEF3C7',
+                borderRadius: '1rem',
+                borderLeft: '4px solid #F59E0B'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', color: '#F59E0B' }}>💼 G (경제)</h3>
+                  <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#F59E0B' }}>
+                    {tier3KPI.gScore}점
+                  </div>
+                </div>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '1rem' }}>
+                  가중치: 20% | 목표: 75점 이상
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.5rem' }}>
+                    <span>자원 가치 (60%)</span>
+                    <strong style={{ color: '#F59E0B' }}>{tier3KPI.gBreakdown.resourceValue}점</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.5rem' }}>
+                    <span>부가가치율 (40%)</span>
+                    <strong style={{ color: '#F59E0B' }}>{tier3KPI.gBreakdown.upcyclingValue}점</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 점수 계산식 */}
+            <div style={{
+              marginTop: '2rem',
+              padding: '1.5rem',
+              backgroundColor: '#F9FAFB',
+              borderRadius: '0.5rem',
+              fontSize: '0.875rem',
+              lineHeight: '1.8'
+            }}>
+              <strong>📐 ESG 임팩트 스코어 계산식:</strong>
+              <div style={{ marginTop: '0.5rem', fontFamily: 'monospace', color: '#374151' }}>
+                총점 = (E점수 × 0.5) + (S점수 × 0.3) + (G점수 × 0.2)
+              </div>
+              <div style={{ marginTop: '0.5rem', fontFamily: 'monospace', color: '#374151' }}>
+                = ({tier3KPI.eScore} × 0.5) + ({tier3KPI.sScore} × 0.3) + ({tier3KPI.gScore} × 0.2) = {tier3KPI.totalScore}점
+              </div>
+              <div style={{ marginTop: '1rem', color: '#6B7280' }}>
+                <strong>등급 기준:</strong> S (80-100점) | A (60-80점) | B (40-60점) | C (20-40점) | D (0-20점)
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 참여 캠페인 내역 */}
       <div className="section">

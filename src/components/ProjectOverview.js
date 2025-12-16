@@ -418,8 +418,101 @@ function ProjectOverview() {
           </div>
         </div>
 
+        {/* Tier 2 KPI Detailed Descriptions */}
+        <div className="section" style={{ marginTop: '3rem' }}>
+          <h2 className="section-title">📊 Tier 2 보조 KPI (5개) 상세 설명</h2>
+          <p className="section-subtitle">
+            Tier 1 핵심 KPI를 보완하고, Tier 3 통합 스코어 산출을 위한 세부 구성 요소입니다.
+          </p>
+
+          {/* KPI #4: Energy Saving */}
+          <div className="card" style={{ marginTop: '2rem' }}>
+            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#10B981' }}>
+              ⚡ KPI #4. 에너지 절감 효과 (E)
+            </h3>
+            <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1rem' }}>
+              <p style={{ marginBottom: '0.5rem' }}><strong>측정 지표:</strong> 에너지 절감량 (kWh)</p>
+              <p style={{ marginBottom: '0.5rem' }}><strong>산출식:</strong> Σ(제품 생산량 × 에너지 절감 계수)</p>
+              <p style={{ marginBottom: '0.5rem' }}><strong>Tier 3 기여도:</strong> E 점수의 20%</p>
+              <p><strong>목표:</strong> 월 15,000 kWh 이상</p>
+            </div>
+            <div style={{ padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem' }}>
+              <strong>에너지 절감 계수:</strong> PET 13.9 kWh/kg, HDPE 12.5 kWh/kg, 혼합 플라스틱 11.1 kWh/kg
+              <br/><small style={{ color: '#6B7280' }}>출처: Plastics Europe</small>
+            </div>
+          </div>
+
+          {/* KPI #5: Partner Network */}
+          <div className="card">
+            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#3B82F6' }}>
+              🤝 KPI #5. 협력 네트워크 확장도 (S)
+            </h3>
+            <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1rem' }}>
+              <p style={{ marginBottom: '0.5rem' }}><strong>측정 지표:</strong> 활성 협력 기관 수 (개)</p>
+              <p style={{ marginBottom: '0.5rem' }}><strong>측정 기준:</strong> 최근 3개월 내 실제 활동 기관</p>
+              <p style={{ marginBottom: '0.5rem' }}><strong>Tier 3 기여도:</strong> S 점수의 50%</p>
+              <p><strong>목표:</strong> 10개 기관 이상</p>
+            </div>
+            <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
+              <strong>협력 기관 유형:</strong> 민간 기업, 공공기관, 교육기관, 비영리단체
+              <br/><small style={{ color: '#6B7280' }}>GRI 102-12, 102-13 연계</small>
+            </div>
+          </div>
+
+          {/* KPI #6: Resource Value */}
+          <div className="card">
+            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#F59E0B' }}>
+              💰 KPI #6. 자원 가치 보존액 (G)
+            </h3>
+            <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1rem' }}>
+              <p style={{ marginBottom: '0.5rem' }}><strong>측정 지표:</strong> 자원 가치 보존액 (원)</p>
+              <p style={{ marginBottom: '0.5rem' }}><strong>산출식:</strong> Σ(수거량 × 재활용 원료 시장가격)</p>
+              <p style={{ marginBottom: '0.5rem' }}><strong>Tier 3 기여도:</strong> G 점수의 60%</p>
+              <p><strong>목표:</strong> 월 500,000원 이상</p>
+            </div>
+            <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
+              <strong>시장 가격:</strong> 혼합 플라스틱 재활용 원료 500원/kg
+              <br/><small style={{ color: '#6B7280' }}>폐기물을 자산으로 전환하는 순환 경제의 기초적 경제 효과</small>
+            </div>
+          </div>
+
+          {/* KPI #7: Education Reach */}
+          <div className="card">
+            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#3B82F6' }}>
+              📚 KPI #7. 교육 도달 범위 (S)
+            </h3>
+            <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1rem' }}>
+              <p style={{ marginBottom: '0.5rem' }}><strong>측정 지표:</strong> 교육 효과 지수 (점)</p>
+              <p style={{ marginBottom: '0.5rem' }}><strong>산출식:</strong> (직접 참여 × 10) + (간접 참여 × 1)</p>
+              <p style={{ marginBottom: '0.5rem' }}><strong>Tier 3 기여도:</strong> S 점수의 50%</p>
+              <p><strong>목표:</strong> 1,200점 이상</p>
+            </div>
+            <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
+              <strong>가중치 차등 적용:</strong> 직접 참여(워크숍, 현장 교육) 10배, 간접 참여(온라인, 홍보) 1배
+              <br/><small style={{ color: '#6B7280' }}>실제 행동 변화 가능성이 높은 직접 참여의 질적 성과 우선 측정</small>
+            </div>
+          </div>
+
+          {/* KPI #8: Upcycling Value */}
+          <div className="card">
+            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#F59E0B' }}>
+              📈 KPI #8. 업사이클링 부가가치율 (G)
+            </h3>
+            <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1rem' }}>
+              <p style={{ marginBottom: '0.5rem' }}><strong>측정 지표:</strong> 부가가치율 (%)</p>
+              <p style={{ marginBottom: '0.5rem' }}><strong>산출식:</strong> [(제품 판매가 - 원료 가치) / 원료 가치] × 100</p>
+              <p style={{ marginBottom: '0.5rem' }}><strong>Tier 3 기여도:</strong> G 점수의 40%</p>
+              <p><strong>목표:</strong> 400% 이상</p>
+            </div>
+            <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
+              <strong>전략적 의의:</strong> 원료 가치가 낮은 복합 플라스틱을 고부가가치 제품으로 전환하여
+              재무적 생존력을 확보하는 코끼리공장의 핵심 비즈니스 모델 입증
+            </div>
+          </div>
+        </div>
+
         {/* Environmental Conversion Indicators */}
-        <div className="card" style={{ marginBottom: '2rem' }}>
+        <div className="card" style={{ marginBottom: '2rem', marginTop: '3rem' }}>
           <h2 className="section-title">🌳 환산 지표 (쉽게 알아볼 수 있는 지표)</h2>
           <p className="section-subtitle">
             CO₂ 저감량을 일상적인 지표로 변환하여 성과를 직관적으로 이해할 수 있도록 합니다.

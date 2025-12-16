@@ -7,7 +7,9 @@ import {
 import {
   getAllCompaniesSummary,
   companiesPerformance,
-  companiesTimeSeries
+  companiesTimeSeries,
+  companiesTier2KPI,
+  companiesTier3KPI
 } from '../data/companiesData';
 
 function Dashboard() {
@@ -574,6 +576,173 @@ function Dashboard() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Tier 2 보조 KPI */}
+        <div className="section">
+          <h2 className="section-title">📊 Tier 2 보조 KPI (5개 지표)</h2>
+          <p className="section-subtitle">
+            분기별 측정 지표로 상세 분석 및 ESG 평가 대응에 활용됩니다.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+            {sortedCompanies.map(company => {
+              const tier2 = companiesTier2KPI[company.id];
+              return (
+                <div key={company.id} className="card" style={{ padding: '1.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                    <span style={{ fontSize: '2rem', marginRight: '0.75rem' }}>{company.logo}</span>
+                    <div>
+                      <h3 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{company.name}</h3>
+                      <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>{company.industry}</div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {/* KPI #4: 에너지 절감 */}
+                    <div style={{ padding: '0.75rem', backgroundColor: '#F0FDF4', borderRadius: '0.375rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#065F46', marginBottom: '0.25rem' }}>⚡ 에너지 절감 (E)</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#10B981' }}>
+                        {tier2.energySaving.monthly.toLocaleString()} kWh
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>등급: {tier2.energySaving.grade}</div>
+                    </div>
+
+                    {/* KPI #5: 협력 네트워크 */}
+                    <div style={{ padding: '0.75rem', backgroundColor: '#EFF6FF', borderRadius: '0.375rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#1E40AF', marginBottom: '0.25rem' }}>🤝 협력 네트워크 (S)</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#3B82F6' }}>
+                        {tier2.partnerNetwork.activePartners}개 기관
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>등급: {tier2.partnerNetwork.grade}</div>
+                    </div>
+
+                    {/* KPI #6: 자원 가치 */}
+                    <div style={{ padding: '0.75rem', backgroundColor: '#FEF3C7', borderRadius: '0.375rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#78350F', marginBottom: '0.25rem' }}>💰 자원 가치 (G)</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#F59E0B' }}>
+                        {tier2.resourceValue.monthly.toLocaleString()}원
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>등급: {tier2.resourceValue.grade}</div>
+                    </div>
+
+                    {/* KPI #7: 교육 도달 */}
+                    <div style={{ padding: '0.75rem', backgroundColor: '#EFF6FF', borderRadius: '0.375rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#1E40AF', marginBottom: '0.25rem' }}>📚 교육 도달 (S)</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#3B82F6' }}>
+                        {tier2.educationReach.score.toLocaleString()}점
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>등급: {tier2.educationReach.grade}</div>
+                    </div>
+
+                    {/* KPI #8: 업사이클링 부가가치 */}
+                    <div style={{ padding: '0.75rem', backgroundColor: '#FEF3C7', borderRadius: '0.375rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#78350F', marginBottom: '0.25rem' }}>📈 부가가치율 (G)</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#F59E0B' }}>
+                        {tier2.upcyclingValue.rate}%
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>등급: {tier2.upcyclingValue.grade}</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Tier 3 통합 KPI (ESG 임팩트 스코어) */}
+        <div className="section">
+          <h2 className="section-title">🏆 Tier 3 통합 KPI - ESG 임팩트 스코어</h2>
+          <p className="section-subtitle">
+            연간 평가 지표로 대외 공시 및 투자 유치에 활용됩니다. E(50%) + S(30%) + G(20%) 가중 평균
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem' }}>
+            {sortedCompanies.map(company => {
+              const tier3 = companiesTier3KPI[company.id];
+              const getGradeColor = (grade) => {
+                if (grade === 'S') return '#10B981';
+                if (grade === 'A') return '#3B82F6';
+                if (grade === 'B') return '#059669';
+                return '#F59E0B';
+              };
+
+              return (
+                <div key={company.id} className="card" style={{ padding: '1.5rem' }}>
+                  {/* Header */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <span style={{ fontSize: '2.5rem', marginRight: '1rem' }}>{company.logo}</span>
+                      <div>
+                        <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>{company.name}</h3>
+                        <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>{company.industry}</div>
+                      </div>
+                    </div>
+                    <div style={{
+                      fontSize: '3rem',
+                      fontWeight: '700',
+                      color: getGradeColor(tier3.grade)
+                    }}>
+                      {tier3.grade}
+                    </div>
+                  </div>
+
+                  {/* Total Score */}
+                  <div style={{
+                    textAlign: 'center',
+                    padding: '1.5rem',
+                    backgroundColor: '#F9FAFB',
+                    borderRadius: '0.5rem',
+                    marginBottom: '1.5rem'
+                  }}>
+                    <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.5rem' }}>ESG 임팩트 스코어</div>
+                    <div style={{ fontSize: '3rem', fontWeight: '700', color: getGradeColor(tier3.grade) }}>
+                      {tier3.totalScore}점
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#6B7280', marginTop: '0.5rem' }}>
+                      {tier3.gradeDescription}
+                    </div>
+                  </div>
+
+                  {/* E, S, G Breakdown */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {/* E Score */}
+                    <div style={{ padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <div style={{ fontSize: '1rem', fontWeight: '600', color: '#065F46' }}>환경 (E)</div>
+                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10B981' }}>{tier3.eScore}점</div>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>
+                        탄소저감 {tier3.eBreakdown.carbonReduction}점 | 에너지절감 {tier3.eBreakdown.energySaving}점 | 순환성 {tier3.eBreakdown.circularity}점
+                      </div>
+                    </div>
+
+                    {/* S Score */}
+                    <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <div style={{ fontSize: '1rem', fontWeight: '600', color: '#1E40AF' }}>사회 (S)</div>
+                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#3B82F6' }}>{tier3.sScore}점</div>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>
+                        교육참여 {tier3.sBreakdown.education}점 | 협력기관 {tier3.sBreakdown.partnership}점
+                      </div>
+                    </div>
+
+                    {/* G Score */}
+                    <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <div style={{ fontSize: '1rem', fontWeight: '600', color: '#78350F' }}>경제 (G)</div>
+                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#F59E0B' }}>{tier3.gScore}점</div>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>
+                        자원가치 {tier3.gBreakdown.resourceValue}점 | 부가가치 {tier3.gBreakdown.upcyclingValue}점
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
