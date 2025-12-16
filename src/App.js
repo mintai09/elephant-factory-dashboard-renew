@@ -8,6 +8,7 @@ import ProjectOverview from './components/ProjectOverview';
 import Dashboard from './components/Dashboard';
 import CompanyList from './components/CompanyList';
 import CompanyDetail from './components/CompanyDetail';
+import ESGSimulator from './components/ESGSimulator';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/companies" element={<CompanyList />} />
           <Route path="/company/:companyId" element={<CompanyDetail />} />
+          <Route path="/simulator" element={<ESGSimulator />} />
         </Routes>
       </div>
     </Router>

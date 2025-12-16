@@ -26,6 +26,9 @@ function Navbar() {
           <li>
             <Link to="/companies">기업별 성과</Link>
           </li>
+          <li>
+            <Link to="/simulator">ESG 시뮬레이션</Link>
+          </li>
         </ul>
       </div>
     </nav>

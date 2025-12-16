@@ -432,25 +432,34 @@ export const companiesTier2KPI = {
     },
     // KPI #6: 자원 가치 보존액 (G)
     resourceValue: {
-      monthly: 620000, // 원 (1,240kg × 500원/kg)
+      monthlyValue: 620000, // 원 (1,240kg × 500원/kg)
       unitPrice: 500, // 원/kg (혼합 플라스틱 재활용 원료 시장가격)
       collected: 1240,
+      breakdown: {
+        plastic: 450000, // 플라스틱 재자원화
+        toys: 170000 // 장난감 재사용
+      },
       target: 500000,
       grade: '우수'
     },
     // KPI #7: 교육 도달 범위 (S)
     educationReach: {
-      score: 1500, // 점 (직접참여 120×10 + 간접참여 300×1)
-      directParticipation: 120, // 워크숍, 현장 교육
-      indirectParticipation: 300, // 온라인, 홍보
+      totalScore: 1500, // 점 (직접참여 120×10 + 간접참여 300×1)
+      breakdown: {
+        employees: 120, // 임직원
+        partners: 80, // 협력사
+        community: 100 // 지역사회
+      },
       target: 1200,
       grade: '우수'
     },
     // KPI #8: 업사이클링 부가가치율 (G)
     upcyclingValue: {
-      rate: 420, // % ((제품 판매가 2,600 - 원료 가치 500) / 500 × 100)
-      productPrice: 2600, // 원/kg
-      materialCost: 500, // 원/kg
+      valueAddedRate: 420, // % ((제품 판매가 2,600 - 원료 가치 500) / 500 × 100)
+      breakdown: {
+        rawMaterialValue: 620000, // 원재료 가치
+        finalProductValue: 3224000 // 최종 제품 가치
+      },
       target: 400,
       grade: '우수'
     }
@@ -478,23 +487,32 @@ export const companiesTier2KPI = {
       grade: '양호'
     },
     resourceValue: {
-      monthly: 490000,
+      monthlyValue: 490000,
       unitPrice: 500,
       collected: 980,
+      breakdown: {
+        plastic: 360000,
+        toys: 130000
+      },
       target: 500000,
       grade: '양호'
     },
     educationReach: {
-      score: 1250,
-      directParticipation: 100,
-      indirectParticipation: 250,
+      totalScore: 1250,
+      breakdown: {
+        employees: 100,
+        partners: 70,
+        community: 80
+      },
       target: 1200,
       grade: '우수'
     },
     upcyclingValue: {
-      rate: 400,
-      productPrice: 2500,
-      materialCost: 500,
+      valueAddedRate: 400,
+      breakdown: {
+        rawMaterialValue: 490000,
+        finalProductValue: 2450000
+      },
       target: 400,
       grade: '우수'
     }
@@ -522,23 +540,32 @@ export const companiesTier2KPI = {
       grade: '양호'
     },
     resourceValue: {
-      monthly: 425000,
+      monthlyValue: 425000,
       unitPrice: 500,
       collected: 850,
+      breakdown: {
+        plastic: 310000,
+        toys: 115000
+      },
       target: 500000,
       grade: '양호'
     },
     educationReach: {
-      score: 1050,
-      directParticipation: 85,
-      indirectParticipation: 200,
+      totalScore: 1050,
+      breakdown: {
+        employees: 85,
+        partners: 60,
+        community: 70
+      },
       target: 1200,
       grade: '양호'
     },
     upcyclingValue: {
-      rate: 380,
-      productPrice: 2400,
-      materialCost: 500,
+      valueAddedRate: 380,
+      breakdown: {
+        rawMaterialValue: 425000,
+        finalProductValue: 2040000
+      },
       target: 400,
       grade: '양호'
     }
@@ -566,23 +593,32 @@ export const companiesTier2KPI = {
       grade: '기본'
     },
     resourceValue: {
-      monthly: 360000,
+      monthlyValue: 360000,
       unitPrice: 500,
       collected: 720,
+      breakdown: {
+        plastic: 260000,
+        toys: 100000
+      },
       target: 500000,
       grade: '기본'
     },
     educationReach: {
-      score: 850,
-      directParticipation: 70,
-      indirectParticipation: 150,
+      totalScore: 850,
+      breakdown: {
+        employees: 70,
+        partners: 50,
+        community: 60
+      },
       target: 1200,
       grade: '기본'
     },
     upcyclingValue: {
-      rate: 360,
-      productPrice: 2300,
-      materialCost: 500,
+      valueAddedRate: 360,
+      breakdown: {
+        rawMaterialValue: 360000,
+        finalProductValue: 1656000
+      },
       target: 400,
       grade: '양호'
     }
