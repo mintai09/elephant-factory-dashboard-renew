@@ -11,9 +11,9 @@ function Login() {
 
   // 하드코딩된 계정 정보
   const accounts = {
-    'comento': { password: 'comento2025', role: 'company', companyId: 1, companyName: '코멘토' },
-    'sk-innovation': { password: 'sk2025', role: 'company', companyId: 2, companyName: 'SK Innovation' },
-    'dongseobaljeon': { password: 'dongse02025', role: 'company', companyId: 3, companyName: '동서발전' },
+    'comento': { password: 'comento2025', role: 'company', companyId: 'comento', companyName: '코멘토' },
+    'sk-innovation': { password: 'sk2025', role: 'company', companyId: 'sk-innovation', companyName: 'SK이노베이션' },
+    'dongseobaljeon': { password: 'dongse02025', role: 'company', companyId: 'kewespo', companyName: '동서발전' },
     'admin': { password: 'elephant2025', role: 'admin', companyId: null, companyName: '코끼리공장' }
   };
 

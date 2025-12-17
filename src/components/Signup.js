@@ -15,9 +15,9 @@ function Signup() {
   const [success, setSuccess] = useState(false);
 
   const companies = [
-    { id: 1, name: '코멘토' },
-    { id: 2, name: 'SK Innovation' },
-    { id: 3, name: '동서발전' }
+    { id: 'comento', name: '코멘토' },
+    { id: 'sk-innovation', name: 'SK이노베이션' },
+    { id: 'kewespo', name: '동서발전' }
   ];
 
   const handleInputChange = (e) => {
