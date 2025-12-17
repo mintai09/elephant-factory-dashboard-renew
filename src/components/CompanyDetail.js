@@ -11,6 +11,10 @@ function CompanyDetail({ fixedCompanyId }) {
   const companyId = fixedCompanyId || urlCompanyId;
   const data = getCompanyData(companyId);
 
+  // 로그인 사용자 정보 확인
+  const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null');
+  const isAdmin = userInfo && userInfo.role === 'admin';
+
   // 기업 데이터가 없으면 에러 메시지 표시
   if (!data) {
     return (
@@ -20,9 +24,11 @@ function CompanyDetail({ fixedCompanyId }) {
           <p style={{ color: '#6B7280', margin: '1rem 0 2rem' }}>
             요청하신 기업의 데이터를 찾을 수 없습니다.
           </p>
-          <Link to="/companies" className="btn btn-primary">
-            기업 목록으로 돌아가기
-          </Link>
+          {isAdmin && (
+            <Link to="/companies" className="btn btn-primary">
+              기업 목록으로 돌아가기
+            </Link>
+          )}
         </div>
       </div>
     );
@@ -32,12 +38,14 @@ function CompanyDetail({ fixedCompanyId }) {
 
   return (
     <div className="main-content">
-      {/* 뒤로가기 버튼 */}
-      <div style={{ marginBottom: '1rem' }}>
-        <Link to="/companies" className="btn btn-outline">
-          ← 기업 목록으로 돌아가기
-        </Link>
-      </div>
+      {/* 뒤로가기 버튼 - 관리자만 표시 */}
+      {isAdmin && (
+        <div style={{ marginBottom: '1rem' }}>
+          <Link to="/companies" className="btn btn-outline">
+            ← 기업 목록으로 돌아가기
+          </Link>
+        </div>
+      )}
 
       {/* 기업 헤더 */}
       <div className="section">

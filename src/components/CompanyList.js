@@ -1,8 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { getAllCompaniesSummary } from '../data/companiesData';
 
 function CompanyList() {
+  // 로그인 확인 및 권한 체크
+  const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null');
+
+  // 로그인하지 않았거나 관리자가 아닌 경우 홈으로 리다이렉트
+  if (!userInfo || userInfo.role !== 'admin') {
+    return <Navigate to="/" replace />;
+  }
+
   const companies = getAllCompaniesSummary();
 
   const getGradeBadgeClass = (grade) => {
