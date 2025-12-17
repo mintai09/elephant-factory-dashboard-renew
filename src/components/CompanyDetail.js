@@ -6,8 +6,9 @@ import {
 } from 'recharts';
 import { getCompanyData } from '../data/companiesData';
 
-function CompanyDetail() {
-  const { companyId } = useParams();
+function CompanyDetail({ fixedCompanyId }) {
+  const { companyId: urlCompanyId } = useParams();
+  const companyId = fixedCompanyId || urlCompanyId;
   const data = getCompanyData(companyId);
 
   // 기업 데이터가 없으면 에러 메시지 표시

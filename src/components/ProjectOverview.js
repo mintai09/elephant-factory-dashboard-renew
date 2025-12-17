@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 function ProjectOverview() {
+  const [showTier1Details, setShowTier1Details] = useState(false);
+  const [showTier2Details, setShowTier2Details] = useState(false);
+  const [showTier3Details, setShowTier3Details] = useState(false);
+
   return (
     <div className="main-content">
       <div className="section">
         {/* Hero Section */}
         <div className="card" style={{
-          background: 'linear-gradient(135deg, #10B981 0%, #3B82F6 100%)',
+          background: 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
           color: 'white',
           textAlign: 'center',
           padding: '3rem',
@@ -125,7 +129,31 @@ function ProjectOverview() {
 
         {/* Tier 1 KPI Detailed Formulas */}
         <div className="section">
-          <h2 className="section-title">🔬 Tier 1 핵심 KPI 공식 및 과학적 근거</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2 className="section-title">🔬 Tier 1 핵심 KPI 공식 및 과학적 근거</h2>
+            <button
+              onClick={() => setShowTier1Details(!showTier1Details)}
+              className="btn btn-outline"
+              style={{ width: 'auto', padding: '0.5rem 1rem' }}
+            >
+              {showTier1Details ? '상세 숨기기 ▲' : '상세 보기 ▼'}
+            </button>
+          </div>
+
+          {!showTier1Details && (
+            <div style={{
+              padding: '2rem',
+              backgroundColor: '#F9FAFB',
+              borderRadius: '0.5rem',
+              textAlign: 'center',
+              color: '#6B7280'
+            }}>
+              상세 내용을 보려면 "상세 보기" 버튼을 클릭하세요.
+            </div>
+          )}
+
+          {showTier1Details && (
+            <div>
 
           {/* KPI #1: Carbon Reduction */}
           <div className="card" style={{ marginBottom: '2rem' }}>
@@ -416,14 +444,40 @@ function ProjectOverview() {
               </div>
             </div>
           </div>
+          </div>
+          )}
         </div>
 
         {/* Tier 2 KPI Detailed Descriptions */}
         <div className="section" style={{ marginTop: '3rem' }}>
-          <h2 className="section-title">📊 Tier 2 보조 KPI (5개) 상세 설명</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2 className="section-title">📊 Tier 2 보조 KPI (5개) 상세 설명</h2>
+            <button
+              onClick={() => setShowTier2Details(!showTier2Details)}
+              className="btn btn-outline"
+              style={{ width: 'auto', padding: '0.5rem 1rem' }}
+            >
+              {showTier2Details ? '상세 숨기기 ▲' : '상세 보기 ▼'}
+            </button>
+          </div>
           <p className="section-subtitle">
             Tier 1 핵심 KPI를 보완하고, Tier 3 통합 스코어 산출을 위한 세부 구성 요소입니다.
           </p>
+
+          {!showTier2Details && (
+            <div style={{
+              padding: '2rem',
+              backgroundColor: '#F9FAFB',
+              borderRadius: '0.5rem',
+              textAlign: 'center',
+              color: '#6B7280'
+            }}>
+              상세 내용을 보려면 "상세 보기" 버튼을 클릭하세요.
+            </div>
+          )}
+
+          {showTier2Details && (
+            <div>
 
           {/* KPI #4: Energy Saving */}
           <div className="card" style={{ marginTop: '2rem' }}>
@@ -509,6 +563,8 @@ function ProjectOverview() {
               재무적 생존력을 확보하는 코끼리공장의 핵심 비즈니스 모델 입증
             </div>
           </div>
+          </div>
+          )}
         </div>
 
         {/* Environmental Conversion Indicators */}
@@ -563,7 +619,31 @@ function ProjectOverview() {
 
         {/* ESG Impact Score Grading */}
         <div className="card">
-          <h2 className="section-title">🏆 Tier 3: ESG 임팩트 스코어 등급 체계</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2 className="section-title">🏆 Tier 3: ESG 임팩트 스코어 등급 체계</h2>
+            <button
+              onClick={() => setShowTier3Details(!showTier3Details)}
+              className="btn btn-outline"
+              style={{ width: 'auto', padding: '0.5rem 1rem' }}
+            >
+              {showTier3Details ? '상세 숨기기 ▲' : '상세 보기 ▼'}
+            </button>
+          </div>
+
+          {!showTier3Details && (
+            <div style={{
+              padding: '2rem',
+              backgroundColor: '#F9FAFB',
+              borderRadius: '0.5rem',
+              textAlign: 'center',
+              color: '#6B7280'
+            }}>
+              상세 내용을 보려면 "상세 보기" 버튼을 클릭하세요.
+            </div>
+          )}
+
+          {showTier3Details && (
+            <div>
 
           <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
             <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>가중치 배분 논리</h4>
@@ -634,6 +714,8 @@ function ProjectOverview() {
               </tr>
             </tbody>
           </table>
+          </div>
+          )}
         </div>
       </div>
     </div>
