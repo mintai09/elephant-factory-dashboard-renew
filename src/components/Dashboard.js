@@ -622,7 +622,7 @@ function Dashboard() {
                     <div style={{ padding: '0.75rem', backgroundColor: '#FEF3C7', borderRadius: '0.375rem' }}>
                       <div style={{ fontSize: '0.75rem', color: '#78350F', marginBottom: '0.25rem' }}>💰 자원 가치 (G)</div>
                       <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#F59E0B' }}>
-                        {tier2.resourceValue.monthly.toLocaleString()}원
+                        {tier2.resourceValue.monthlyValue.toLocaleString()}원
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>등급: {tier2.resourceValue.grade}</div>
                     </div>
@@ -631,7 +631,7 @@ function Dashboard() {
                     <div style={{ padding: '0.75rem', backgroundColor: '#EFF6FF', borderRadius: '0.375rem' }}>
                       <div style={{ fontSize: '0.75rem', color: '#1E40AF', marginBottom: '0.25rem' }}>📚 교육 도달 (S)</div>
                       <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#3B82F6' }}>
-                        {tier2.educationReach.score.toLocaleString()}점
+                        {tier2.educationReach.totalScore.toLocaleString()}점
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>등급: {tier2.educationReach.grade}</div>
                     </div>
@@ -640,7 +640,7 @@ function Dashboard() {
                     <div style={{ padding: '0.75rem', backgroundColor: '#FEF3C7', borderRadius: '0.375rem' }}>
                       <div style={{ fontSize: '0.75rem', color: '#78350F', marginBottom: '0.25rem' }}>📈 부가가치율 (G)</div>
                       <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#F59E0B' }}>
-                        {tier2.upcyclingValue.rate}%
+                        {tier2.upcyclingValue.valueAddedRate}%
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>등급: {tier2.upcyclingValue.grade}</div>
                     </div>
