@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/elephant-factory-dashboard-renew/static/css/main.2da45cc1.css",
-    "main.js": "/elephant-factory-dashboard-renew/static/js/main.0b423837.js",
+    "main.css": "/elephant-factory-dashboard-renew/static/css/main.b43d1391.css",
+    "main.js": "/elephant-factory-dashboard-renew/static/js/main.8299295d.js",
     "static/js/977.bdd868af.chunk.js": "/elephant-factory-dashboard-renew/static/js/977.bdd868af.chunk.js",
     "static/js/455.b3fce509.chunk.js": "/elephant-factory-dashboard-renew/static/js/455.b3fce509.chunk.js",
     "static/js/453.5ceb3574.chunk.js": "/elephant-factory-dashboard-renew/static/js/453.5ceb3574.chunk.js",
     "index.html": "/elephant-factory-dashboard-renew/index.html",
-    "main.2da45cc1.css.map": "/elephant-factory-dashboard-renew/static/css/main.2da45cc1.css.map",
-    "main.0b423837.js.map": "/elephant-factory-dashboard-renew/static/js/main.0b423837.js.map",
+    "main.b43d1391.css.map": "/elephant-factory-dashboard-renew/static/css/main.b43d1391.css.map",
+    "main.8299295d.js.map": "/elephant-factory-dashboard-renew/static/js/main.8299295d.js.map",
     "977.bdd868af.chunk.js.map": "/elephant-factory-dashboard-renew/static/js/977.bdd868af.chunk.js.map",
     "455.b3fce509.chunk.js.map": "/elephant-factory-dashboard-renew/static/js/455.b3fce509.chunk.js.map",
     "453.5ceb3574.chunk.js.map": "/elephant-factory-dashboard-renew/static/js/453.5ceb3574.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.2da45cc1.css",
-    "static/js/main.0b423837.js"
+    "static/css/main.b43d1391.css",
+    "static/js/main.8299295d.js"
   ]
 }
