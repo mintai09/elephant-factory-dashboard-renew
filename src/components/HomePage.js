@@ -1,16 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getAllCompaniesSummary, companiesPerformance } from '../data/companiesData';
 
 function HomePage() {
   const companies = getAllCompaniesSummary();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const heroImages = [
+    `${process.env.PUBLIC_URL}/home_1.jpg`,
+    `${process.env.PUBLIC_URL}/home_2.jpg`,
+    `${process.env.PUBLIC_URL}/home_3.jpg`
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
+    }, 5000); // Change image every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-visible');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
 
   // Calculate real totals from companiesData.js
   const totalParticipants = Object.values(companiesPerformance).reduce((sum, c) => sum + c.participants, 0);
   const totalCollection = Object.values(companiesPerformance).reduce((sum, c) => sum + c.collectionAmount, 0);
   const totalCO2 = Object.values(companiesPerformance).reduce((sum, c) => sum + c.co2Reduction, 0);
-  const totalJobHours = Object.values(companiesPerformance).reduce((sum, c) => sum + (c.socialImpact?.jobCreationHours || 0), 0);
-  const totalChildren = Object.values(companiesPerformance).reduce((sum, c) => sum + (c.socialImpact?.childrenBenefited || 0), 0);
+  const totalJobCreation = Object.values(companiesPerformance).reduce((sum, c) => sum + (c.jobCreation || 0), 0);
+  const totalChildren = Object.values(companiesPerformance).reduce((sum, c) => sum + (c.childrenSupported || 0), 0);
   const plasticTotal = Object.values(companiesPerformance).reduce((sum, c) => sum + c.wasteBreakdown.plastic, 0);
   const toysTotal = Object.values(companiesPerformance).reduce((sum, c) => sum + c.wasteBreakdown.toys, 0);
 
@@ -37,44 +71,44 @@ function HomePage() {
   return (
     <div>
       {/* 히어로 섹션 */}
-      <section className="hero-section">
-        {/* ESG 통합 점수 배지 - 최상단 강조 */}
+      <section className="hero-section" style={{
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Background Images with Fade Animation */}
+        {heroImages.map((image, index) => (
+          <div
+            key={index}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundImage: `url(${image})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              opacity: currentImageIndex === index ? 1 : 0,
+              transition: 'opacity 1.5s ease-in-out',
+              zIndex: 0
+            }}
+          />
+        ))}
+        {/* Content Overlay */}
         <div style={{
-          display: 'inline-block',
-          padding: '1rem 2rem',
-          backgroundColor: 'rgba(255,255,255,0.25)',
-          borderRadius: '50px',
-          marginBottom: '1.5rem',
-          backdropFilter: 'blur(10px)',
-          border: '2px solid rgba(255,255,255,0.3)'
+          position: 'relative',
+          zIndex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.4)',
+          padding: '4rem 2rem',
+          width: '100%',
+          height: '100%'
         }}>
-          <div style={{ fontSize: '0.875rem', opacity: 0.9, marginBottom: '0.25rem' }}>
-            통합 ESG 임팩트 스코어
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', justifyContent: 'center' }}>
-            <div style={{ fontSize: '3rem', fontWeight: '700' }}>{esgImpactScore}</div>
-            <div style={{
-              fontSize: '2rem',
-              fontWeight: '700',
-              padding: '0.5rem 1rem',
-              backgroundColor: esgGrade === 'S' ? '#10B981' : esgGrade === 'A' ? '#3B82F6' : '#F59E0B',
-              borderRadius: '0.5rem'
-            }}>
-              {esgGrade}등급
-            </div>
-          </div>
-          <div style={{ fontSize: '0.75rem', opacity: 0.85, marginTop: '0.5rem' }}>
-            E {avgEScore.toFixed(0)}점 (50%) · S {avgSScore.toFixed(0)}점 (30%) · G {avgGScore.toFixed(0)}점 (20%)
-          </div>
-        </div>
-
         <h1 className="hero-title">
           데이터 기반 책임 경영으로 측정 가능한 임팩트 창출
         </h1>
         <p className="hero-subtitle">
-          KCGS, MSCI, GRI 등 공식 ESG 평가 기준에 자동 매핑되는 코끼리공장 대시보드.
-          30분 걸리던 리포트 작업을 3분으로 단축하고,
-          B등급에서 A등급으로 상승한 기업들의 성공 비결을 확인하세요.
+          KCGS, MSCI, GRI 등 공식 ESG 평가 기준에 자동 매핑되는 코끼리공장 대시보드를 제공합니다.
         </p>
 
         {/* 실시간 성과 카운터 */}
@@ -109,7 +143,7 @@ function HomePage() {
           <div className="hero-stat-card">
             <div className="hero-stat-icon">👴</div>
             <div className="hero-stat-value">
-              {totalJobHours.toLocaleString()}시간
+              {totalJobCreation.toLocaleString()}명
             </div>
             <div className="hero-stat-label">노인 일자리</div>
             <div className="hero-stat-growth">아동 혜택 {totalChildren}명</div>
@@ -129,7 +163,7 @@ function HomePage() {
               fontSize: '1.25rem',
               padding: '1rem 2.5rem',
               backgroundColor: 'white',
-              color: '#10B981',
+              color: '#3B82F6',
               fontWeight: '700',
               boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
               transition: 'all 0.3s',
@@ -140,25 +174,28 @@ function HomePage() {
           </Link>
           <button
             onClick={() => alert('데모 신청이 접수되었습니다! 담당자가 곧 연락드리겠습니다.')}
-            className="btn btn-outline"
+            className="btn"
             style={{
               fontSize: '1.125rem',
               padding: '1rem 2rem',
-              backgroundColor: 'rgba(255,255,255,0.1)',
-              color: 'white',
-              border: '2px solid white',
-              fontWeight: '600'
+              backgroundColor: 'white',
+              color: '#3B82F6',
+              border: 'none',
+              fontWeight: '700',
+              boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+              transition: 'all 0.3s'
             }}
           >
             📧 데모 요청하기
           </button>
+        </div>
         </div>
       </section>
 
       {/* 메인 콘텐츠 */}
       <div className="main-content">
         {/* ESG 대시보드 소개 */}
-        <section className="section">
+        <section className="section animate-on-scroll">
           <h2 className="section-title">📊 ESG 대시보드 - 데이터 기반 책임 경영</h2>
           <p className="section-subtitle">
             성과를 눈에 보이게 만들어서 신뢰 확보. 30분 리포트 작업을 3분으로 단축.
@@ -166,7 +203,7 @@ function HomePage() {
 
           <div className="card-grid">
             <div className="card">
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#10B981' }}>
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#374151' }}>
                 📊 실시간 성과 확인
               </h3>
               <p style={{ color: '#6B7280', lineHeight: '1.6' }}>
@@ -204,7 +241,7 @@ function HomePage() {
         </section>
 
         {/* 파트너 성공 사례 섹션 - 새로 추가 */}
-        <section className="section">
+        <section className="section animate-on-scroll">
           <h2 className="section-title">🏆 파트너 성공 사례</h2>
           <p className="section-subtitle">
             코끼리공장 대시보드로 실제 ESG 등급을 상승시킨 파트너사들의 이야기
@@ -281,21 +318,21 @@ function HomePage() {
 
             {/* A기업 업계 최고 성과 사례 */}
             <div className="card" style={{
-              background: 'linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)',
-              borderLeft: '6px solid #10B981'
+              background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',
+              borderLeft: '6px solid #3B82F6'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
                 <div>
-                  <div style={{ fontSize: '0.875rem', color: '#10B981', fontWeight: '600', marginBottom: '0.5rem' }}>
+                  <div style={{ fontSize: '0.875rem', color: '#3B82F6', fontWeight: '600', marginBottom: '0.5rem' }}>
                     BEST PERFORMANCE
                   </div>
-                  <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#065F46', marginBottom: '0.5rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#374151', marginBottom: '0.5rem' }}>
                     코멘토 - 12개 참여사 중 여러 지표 1위 달성
                   </h3>
                 </div>
                 <div style={{
                   padding: '0.5rem 1rem',
-                  backgroundColor: '#10B981',
+                  backgroundColor: '#3B82F6',
                   color: 'white',
                   borderRadius: '0.5rem',
                   fontWeight: '700',
@@ -310,24 +347,24 @@ function HomePage() {
                   🏆 업계 최고 수준 성과
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
-                  <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem' }}>
-                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#10B981' }}>1,240kg</div>
-                    <div style={{ fontSize: '0.875rem', color: '#065F46' }}>폐자원 수거량 1위</div>
+                  <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem' }}>
+                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#374151' }}>1,240kg</div>
+                    <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>폐자원 수거량 1위</div>
                   </div>
-                  <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem' }}>
-                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#10B981' }}>7.70톤</div>
-                    <div style={{ fontSize: '0.875rem', color: '#065F46' }}>CO₂ 절감량 1위</div>
+                  <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem' }}>
+                    <div style={{ fontSize: '2rem', fontWeight: '700', color: '#3B82F6' }}>7.70톤</div>
+                    <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>CO₂ 절감량 1위</div>
                   </div>
                 </div>
               </div>
 
               <div style={{
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                backgroundColor: '#F9FAFB',
                 padding: '1rem',
                 borderRadius: '0.5rem',
                 textAlign: 'center',
                 fontWeight: '600',
-                color: '#065F46',
+                color: '#374151',
                 fontSize: '1.125rem'
               }}>
                 💡 코끼리공장을 통해 업계 최고 수준의 ESG 성과 달성 가능
@@ -337,7 +374,7 @@ function HomePage() {
         </section>
 
         {/* 주요 성과 하이라이트 */}
-        <section className="section">
+        <section className="section animate-on-scroll">
           <h2 className="section-title">🎯 2025 Q1 주요 성과</h2>
           <p className="section-subtitle">
             측정 가능한 임팩트로 ESG 등급 상승의 기반을 마련했습니다
@@ -372,7 +409,7 @@ function HomePage() {
                 </div>
               </div>
               <ul style={{ marginTop: '1rem', color: '#6B7280', lineHeight: '1.8' }}>
-                <li>노인 일자리 {totalJobHours.toLocaleString()}시간</li>
+                <li>노인 일자리 {totalJobCreation.toLocaleString()}명</li>
                 <li>취약계층 아동 {totalChildren}명</li>
                 <li>참여율 평균 {avgParticipationRate.toFixed(1)}%</li>
               </ul>
@@ -398,7 +435,7 @@ function HomePage() {
         </section>
 
         {/* 신뢰성 및 투명성 섹션 - 새로 추가 */}
-        <section className="section">
+        <section className="section animate-on-scroll">
           <h2 className="section-title">✅ 신뢰할 수 있는 ESG 파트너</h2>
           <p className="section-subtitle">
             글로벌 ESG 기준 준수 및 투명한 성과 공유로 공신력 확보
@@ -407,7 +444,7 @@ function HomePage() {
           <div className="card-grid">
             <div className="card" style={{ textAlign: 'center', padding: '2rem' }}>
               <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏅</div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '1rem', color: '#10B981' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '1rem', color: '#374151' }}>
                 글로벌 ESG 기준 자동 매핑
               </h3>
               <p style={{ color: '#6B7280', lineHeight: '1.8', marginBottom: '1rem' }}>
@@ -456,7 +493,7 @@ function HomePage() {
           <div className="card" style={{
             background: 'linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%)',
             padding: '3rem',
-            borderLeft: '6px solid #10B981'
+            borderLeft: '6px solid #3B82F6'
           }}>
             <div style={{ maxWidth: '800px', margin: '0 auto' }}>
               <h2 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '1rem', color: '#111827', textAlign: 'center' }}>
@@ -471,9 +508,9 @@ function HomePage() {
                   구독 혜택
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-                  <div style={{ padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem' }}>
+                  <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem' }}>
                     <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>📊</div>
-                    <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#065F46' }}>분기별 ESG 트렌드 리포트</div>
+                    <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151' }}>분기별 ESG 트렌드 리포트</div>
                   </div>
                   <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
                     <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>💡</div>
@@ -510,7 +547,7 @@ function HomePage() {
                     padding: '1rem 2rem',
                     fontSize: '1rem',
                     fontWeight: '600',
-                    backgroundColor: '#10B981',
+                    backgroundColor: '#3B82F6',
                     color: 'white',
                     border: 'none',
                     borderRadius: '0.5rem',
@@ -532,11 +569,11 @@ function HomePage() {
         {/* ESG 캠페인 동참하기 CTA */}
         <section className="section">
           <div className="card" style={{
-            background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+            background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
             color: 'white',
             textAlign: 'center',
             padding: '3rem',
-            boxShadow: '0 10px 25px rgba(16, 185, 129, 0.3)'
+            boxShadow: '0 10px 25px rgba(59, 130, 246, 0.3)'
           }}>
             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🌱</div>
             <h2 style={{ fontSize: '2rem', marginBottom: '1rem', fontWeight: '700' }}>
@@ -554,7 +591,7 @@ function HomePage() {
                 className="btn"
                 style={{
                   backgroundColor: 'white',
-                  color: '#10B981',
+                  color: '#3B82F6',
                   fontSize: '1.25rem',
                   padding: '1.25rem 2.5rem',
                   textDecoration: 'none',
