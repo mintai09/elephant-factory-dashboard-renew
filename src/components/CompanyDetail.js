@@ -1103,7 +1103,7 @@ function CompanyDetail({ fixedCompanyId }) {
         </div>
 
         {/* Tier 2 보조 KPI 토글 */}
-        {quarterlyTier2KPI {tier2KPI &&{tier2KPI && (
+        {quarterlyTier2KPI && (
           <>
             <div style={{ marginTop: '2rem', marginBottom: '1rem' }}>
               <button
