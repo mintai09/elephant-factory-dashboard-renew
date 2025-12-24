@@ -573,9 +573,9 @@ function CompanyDetail({ fixedCompanyId }) {
           <div className="card">
             <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💰</div>
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.25rem' }}>
-              기부 금액
+              지원 금액
             </div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#10B981' }}>
+            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#F59E0B' }}>
               {((performance.jobCreation || 0) * 50000).toLocaleString()}원
             </div>
           </div>
@@ -1137,6 +1137,66 @@ function CompanyDetail({ fixedCompanyId }) {
               <div className="badge badge-success">
                 {quarterlyKPI.socialImpact.grade}
               </div>
+            </div>
+          </div>
+
+          {/* KPI #4: 지원 금액 */}
+          <div className="card">
+            <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💰</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+              <h3 style={{ fontSize: '1.25rem', margin: 0 }}>
+                지원 금액
+              </h3>
+              <button
+                onClick={() => toggleTooltip('funding')}
+                style={{
+                  background: '#F59E0B',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '20px',
+                  height: '20px',
+                  cursor: 'pointer',
+                  fontSize: '0.75rem',
+                  fontWeight: '700',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}
+                title="자세히 보기"
+              >
+                ?
+              </button>
+            </div>
+            {activeTooltip === 'funding' && (
+              <div style={{
+                marginBottom: '1rem',
+                padding: '0.75rem',
+                backgroundColor: '#FFFBEB',
+                borderRadius: '0.5rem',
+                borderLeft: '3px solid #F59E0B',
+                fontSize: '0.75rem',
+                lineHeight: '1.5',
+                color: '#92400E'
+              }}>
+                <strong>💰 지원 금액이란?</strong><br/>
+                해당 분기에 프로젝트를 위해 지원된 총 금액입니다.
+                분기별 활동 규모와 성과에 따라 차등 지원됩니다.
+              </div>
+            )}
+            <div style={{ fontSize: '2rem', fontWeight: '700', color: '#F59E0B', marginBottom: '0.5rem' }}>
+              {(() => {
+                const quarterData = timeSeries?.find(item =>
+                  item.quarter === `${selectedQuarter}'${selectedYear.slice(2)}`
+                );
+                return quarterData?.funding
+                  ? `${(quarterData.funding / 10000).toLocaleString()}만원`
+                  : '-';
+              })()}
+            </div>
+            <div style={{ fontSize: '0.875rem', color: '#6B7280', marginTop: '0.5rem' }}>
+              분기별 프로젝트 지원금
             </div>
           </div>
         </div>

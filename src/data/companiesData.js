@@ -912,26 +912,26 @@ export const companiesCumulative = {
 // 각 기업의 시계열 데이터
 export const companiesTimeSeries = {
   'comento': [
-    { quarter: 'Q2\'24', collection: 800, participants: 150, co2: 5.8 },
-    { quarter: 'Q3\'24', collection: 1100, participants: 280, co2: 8.2 },
-    { quarter: 'Q4\'24', collection: 980, participants: 230, co2: 7.2 },
-    { quarter: 'Q1\'25', collection: 1240, participants: 320, co2: 7.43 }
+    { quarter: 'Q2\'24', collection: 800, participants: 150, co2: 5.8, funding: 7500000 },
+    { quarter: 'Q3\'24', collection: 1100, participants: 280, co2: 8.2, funding: 14000000 },
+    { quarter: 'Q4\'24', collection: 980, participants: 230, co2: 7.2, funding: 11500000 },
+    { quarter: 'Q1\'25', collection: 1240, participants: 320, co2: 7.43, funding: 16000000 }
   ],
   'sk-innovation': [
-    { quarter: 'Q1\'24', collection: 650, participants: 120, co2: 4.8 },
-    { quarter: 'Q2\'24', collection: 720, participants: 180, co2: 5.3 },
-    { quarter: 'Q3\'24', collection: 850, participants: 220, co2: 6.2 },
-    { quarter: 'Q4\'24', collection: 900, participants: 250, co2: 6.6 },
-    { quarter: 'Q1\'25', collection: 980, participants: 280, co2: 6.06 }
+    { quarter: 'Q1\'24', collection: 650, participants: 120, co2: 4.8, funding: 6000000 },
+    { quarter: 'Q2\'24', collection: 720, participants: 180, co2: 5.3, funding: 9000000 },
+    { quarter: 'Q3\'24', collection: 850, participants: 220, co2: 6.2, funding: 11000000 },
+    { quarter: 'Q4\'24', collection: 900, participants: 250, co2: 6.6, funding: 12500000 },
+    { quarter: 'Q1\'25', collection: 980, participants: 280, co2: 6.06, funding: 14000000 }
   ],
   'kewespo': [
-    { quarter: 'Q3\'24', collection: 600, participants: 120, co2: 4.5 },
-    { quarter: 'Q4\'24', collection: 720, participants: 160, co2: 5.2 },
-    { quarter: 'Q1\'25', collection: 850, participants: 195, co2: 5.43 }
+    { quarter: 'Q3\'24', collection: 600, participants: 120, co2: 4.5, funding: 6000000 },
+    { quarter: 'Q4\'24', collection: 720, participants: 160, co2: 5.2, funding: 8000000 },
+    { quarter: 'Q1\'25', collection: 850, participants: 195, co2: 5.43, funding: 9750000 }
   ],
   'posco': [
-    { quarter: 'Q4\'24', collection: 580, participants: 110, co2: 4.5 },
-    { quarter: 'Q1\'25', collection: 720, participants: 160, co2: 4.58 }
+    { quarter: 'Q4\'24', collection: 580, participants: 110, co2: 4.5, funding: 5500000 },
+    { quarter: 'Q1\'25', collection: 720, participants: 160, co2: 4.58, funding: 8000000 }
   ]
 };
 
