@@ -324,9 +324,18 @@ function CompanyDetail({ fixedCompanyId }) {
     } : null;
 
     // 분기별 ESG 임팩트 스코어 재계산
-    const eScore = Math.round((quarterlyKPI.carbonReduction.reduction / 100) * 50 + 30); // 간단한 계산
-    const sScore = Math.round((quarterlyKPI.socialImpact.monthlyValue / 5000000) * 100);
-    const gScore = 82; // 거버넌스는 동일
+    // E Score: 탄소 저감 (50점 만점)
+    const carbonScore = Math.min(50, Math.round((quarterlyKPI.carbonReduction.monthly / 5.0) * 50));
+    const eScore = Math.max(30, carbonScore); // 최소 30점
+
+    // S Score: 사회적 임팩트 (100점 만점)
+    const socialValue = quarterlyKPI.socialImpact.monthlyValue || 0;
+    const sScore = Math.min(100, Math.max(0, Math.round((socialValue / 2000000) * 100)));
+
+    // G Score: 거버넌스는 동일 (분기별 변동 없음)
+    const gScore = tier3KPI ? tier3KPI.gScore : 82;
+
+    // Total Score: E(40%) + S(40%) + G(20%)
     const totalScore = Math.round((eScore * 0.4) + (sScore * 0.4) + (gScore * 0.2));
 
     let grade = 'C';
