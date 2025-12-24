@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/elephant-factory-dashboard-renew/static/css/main.3bcd0e2b.css",
-    "main.js": "/elephant-factory-dashboard-renew/static/js/main.ac09392a.js",
+    "main.js": "/elephant-factory-dashboard-renew/static/js/main.dda23af6.js",
     "static/js/977.bdd868af.chunk.js": "/elephant-factory-dashboard-renew/static/js/977.bdd868af.chunk.js",
     "static/js/455.b3fce509.chunk.js": "/elephant-factory-dashboard-renew/static/js/455.b3fce509.chunk.js",
     "static/js/453.5ceb3574.chunk.js": "/elephant-factory-dashboard-renew/static/js/453.5ceb3574.chunk.js",
     "index.html": "/elephant-factory-dashboard-renew/index.html",
     "main.3bcd0e2b.css.map": "/elephant-factory-dashboard-renew/static/css/main.3bcd0e2b.css.map",
-    "main.ac09392a.js.map": "/elephant-factory-dashboard-renew/static/js/main.ac09392a.js.map",
+    "main.dda23af6.js.map": "/elephant-factory-dashboard-renew/static/js/main.dda23af6.js.map",
     "977.bdd868af.chunk.js.map": "/elephant-factory-dashboard-renew/static/js/977.bdd868af.chunk.js.map",
     "455.b3fce509.chunk.js.map": "/elephant-factory-dashboard-renew/static/js/455.b3fce509.chunk.js.map",
     "453.5ceb3574.chunk.js.map": "/elephant-factory-dashboard-renew/static/js/453.5ceb3574.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.3bcd0e2b.css",
-    "static/js/main.ac09392a.js"
+    "static/js/main.dda23af6.js"
   ]
 }
