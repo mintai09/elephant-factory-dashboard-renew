@@ -88,8 +88,8 @@ function Navbar() {
         <div className="navbar-container">
           <Link to="/" className="logo" aria-label="코끼리공장 홈">
             <img
-              src="/k_logo_mo3.png"
-              alt="코끼리 공장"
+              src={`${process.env.PUBLIC_URL}/k_logo_mo3.png`}
+              alt="코끼리 공장 로고"
               style={{ height: '40px', width: 'auto' }}
             />
           </Link>
