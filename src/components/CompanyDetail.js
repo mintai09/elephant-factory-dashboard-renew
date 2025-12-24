@@ -230,7 +230,26 @@ function CompanyDetail({ fixedCompanyId }) {
         monthly: quarterData.co2,
         baseline: kpi.carbonReduction.baseline,
         reduction: Math.round((quarterData.co2 / kpi.carbonReduction.monthly) * kpi.carbonReduction.reduction),
-        grade: kpi.carbonReduction.grade
+        grade: kpi.carbonReduction.grade,
+        breakdown: kpi.carbonReduction.breakdown ? {
+          plastic: kpi.carbonReduction.breakdown.plastic ? Math.round(kpi.carbonReduction.breakdown.plastic * ratio) : 0,
+          toys: kpi.carbonReduction.breakdown.toys ? Math.round(kpi.carbonReduction.breakdown.toys * ratio) : 0,
+          total: kpi.carbonReduction.breakdown.total ? parseFloat((kpi.carbonReduction.breakdown.total * ratio).toFixed(2)) : 0
+        } : undefined,
+        wasteDetail: kpi.carbonReduction.wasteDetail ? {
+          plastic: kpi.carbonReduction.wasteDetail.plastic ? {
+            total: Math.round(kpi.carbonReduction.wasteDetail.plastic.total * ratio),
+            pet: Math.round(kpi.carbonReduction.wasteDetail.plastic.pet * ratio),
+            hdpe: Math.round(kpi.carbonReduction.wasteDetail.plastic.hdpe * ratio),
+            processing: kpi.carbonReduction.wasteDetail.plastic.processing
+          } : undefined,
+          toys: kpi.carbonReduction.wasteDetail.toys ? {
+            total: Math.round(kpi.carbonReduction.wasteDetail.toys.total * ratio),
+            reuse: Math.round(kpi.carbonReduction.wasteDetail.toys.reuse * ratio),
+            upcycling: Math.round(kpi.carbonReduction.wasteDetail.toys.upcycling * ratio),
+            recycling: Math.round(kpi.carbonReduction.wasteDetail.toys.recycling * ratio)
+          } : undefined
+        } : undefined
       },
       circularResource: {
         collected: quarterData.collection,
@@ -248,49 +267,60 @@ function CompanyDetail({ fixedCompanyId }) {
 
     // 분기별 Tier2 KPI 계산
     const quarterlyTier2KPI = tier2KPI && tier2KPI.energySaving && tier2KPI.wasteReduction ? {
-      energySaving: {
+      energySaving: tier2KPI.energySaving ? {
         monthlyKWh: Math.round(tier2KPI.energySaving.monthlyKWh * ratio),
         co2Equivalent: parseFloat((tier2KPI.energySaving.co2Equivalent * ratio).toFixed(2)),
         costSaving: Math.round(tier2KPI.energySaving.costSaving * ratio),
         grade: tier2KPI.energySaving.grade
-      },
-      wasteReduction: {
+      } : undefined,
+      wasteReduction: tier2KPI.wasteReduction ? {
         totalWeight: Math.round(tier2KPI.wasteReduction.totalWeight * ratio),
         monthlyReduction: Math.round(tier2KPI.wasteReduction.monthlyReduction * ratio),
         reductionRate: tier2KPI.wasteReduction.reductionRate,
-        breakdown: {
+        breakdown: tier2KPI.wasteReduction.breakdown ? {
           plastic: Math.round(tier2KPI.wasteReduction.breakdown.plastic * ratio),
           paper: Math.round(tier2KPI.wasteReduction.breakdown.paper * ratio),
           etc: Math.round(tier2KPI.wasteReduction.breakdown.etc * ratio)
-        },
+        } : undefined,
         grade: tier2KPI.wasteReduction.grade
-      },
-      educationReach: {
+      } : undefined,
+      educationReach: tier2KPI.educationReach ? {
         totalReach: Math.round(tier2KPI.educationReach.totalReach * ratio),
         weightedScore: Math.round(tier2KPI.educationReach.weightedScore * ratio),
-        breakdown: {
+        breakdown: tier2KPI.educationReach.breakdown ? {
           employees: Math.round(tier2KPI.educationReach.breakdown.employees * ratio),
           partners: Math.round(tier2KPI.educationReach.breakdown.partners * ratio),
           community: Math.round(tier2KPI.educationReach.breakdown.community * ratio)
-        },
+        } : undefined,
         grade: tier2KPI.educationReach.grade
-      },
-      supplyChainEngagement: {
+      } : undefined,
+      supplyChainEngagement: tier2KPI.supplyChainEngagement ? {
         totalPartners: tier2KPI.supplyChainEngagement.totalPartners,
         activePartners: Math.round(tier2KPI.supplyChainEngagement.activePartners * ratio),
         engagementRate: Math.round(tier2KPI.supplyChainEngagement.engagementRate * ratio),
         grade: tier2KPI.supplyChainEngagement.grade
-      },
-      upcyclingValue: {
+      } : undefined,
+      upcyclingValue: tier2KPI.upcyclingValue ? {
         rawMaterialValue: Math.round(tier2KPI.upcyclingValue.rawMaterialValue * ratio),
         finalProductValue: Math.round(tier2KPI.upcyclingValue.finalProductValue * ratio),
         valueAddedRate: tier2KPI.upcyclingValue.valueAddedRate,
-        breakdown: {
+        breakdown: tier2KPI.upcyclingValue.breakdown ? {
           rawMaterialValue: Math.round(tier2KPI.upcyclingValue.breakdown.rawMaterialValue * ratio),
           finalProductValue: Math.round(tier2KPI.upcyclingValue.breakdown.finalProductValue * ratio)
-        },
+        } : undefined,
         grade: tier2KPI.upcyclingValue.grade
-      }
+      } : undefined,
+      resourceValue: tier2KPI.resourceValue ? {
+        monthlyValue: Math.round(tier2KPI.resourceValue.monthlyValue * ratio),
+        unitPrice: tier2KPI.resourceValue.unitPrice,
+        collected: Math.round(tier2KPI.resourceValue.collected * ratio),
+        breakdown: tier2KPI.resourceValue.breakdown ? {
+          plastic: Math.round(tier2KPI.resourceValue.breakdown.plastic * ratio),
+          toys: Math.round(tier2KPI.resourceValue.breakdown.toys * ratio)
+        } : undefined,
+        target: tier2KPI.resourceValue.target,
+        grade: tier2KPI.resourceValue.grade
+      } : undefined
     } : null;
 
     // 분기별 ESG 임팩트 스코어 재계산
