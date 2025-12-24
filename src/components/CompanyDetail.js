@@ -1805,14 +1805,19 @@ function CompanyDetail({ fixedCompanyId }) {
             <div style={{ marginTop: '2rem' }}>
               <h3 style={{ marginBottom: '1rem' }}>📈 분기별 추이</h3>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={timeSeries}>
+                <LineChart data={timeSeries.map(item => ({
+                  ...item,
+                  fundingInManwon: item.funding ? item.funding / 10000 : 0
+                }))}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="quarter" />
-                  <YAxis />
+                  <YAxis yAxisId="left" />
+                  <YAxis yAxisId="right" orientation="right" />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="collection" stroke="#10B981" strokeWidth={2} name="수거량 (kg)" />
-                  <Line type="monotone" dataKey="participants" stroke="#3B82F6" strokeWidth={2} name="참여자 (명)" />
+                  <Line yAxisId="left" type="monotone" dataKey="collection" stroke="#10B981" strokeWidth={2} name="수거량 (kg)" />
+                  <Line yAxisId="left" type="monotone" dataKey="participants" stroke="#3B82F6" strokeWidth={2} name="참여자 (명)" />
+                  <Line yAxisId="right" type="monotone" dataKey="fundingInManwon" stroke="#F59E0B" strokeWidth={2} name="지원금액 (만원)" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
