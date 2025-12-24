@@ -880,28 +880,32 @@ export const companiesCumulative = {
     totalParticipants: 980,
     totalCollection: 4120,
     totalCO2Reduction: 24.6,  // 정확한 계산 적용
-    totalJobCreation: 820
+    totalJobCreation: 820,
+    totalFunding: 34000000  // 누적 지원 금액 (4분기 × 약 850만원)
   },
   'sk-innovation': {
     totalParticipations: 5,
     totalParticipants: 1150,
     totalCollection: 3850,
     totalCO2Reduction: 23.2,
-    totalJobCreation: 750
+    totalJobCreation: 750,
+    totalFunding: 36000000  // 누적 지원 금액 (5분기 × 약 720만원)
   },
   'kewespo': {
     totalParticipations: 3,
     totalParticipants: 580,
     totalCollection: 2400,
     totalCO2Reduction: 15.8,
-    totalJobCreation: 480
+    totalJobCreation: 480,
+    totalFunding: 19500000  // 누적 지원 금액 (3분기 × 약 650만원)
   },
   'posco': {
     totalParticipations: 2,
     totalParticipants: 320,
     totalCollection: 1450,
     totalCO2Reduction: 9.1,
-    totalJobCreation: 290
+    totalJobCreation: 290,
+    totalFunding: 11600000  // 누적 지원 금액 (2분기 × 약 580만원)
   }
 };
 

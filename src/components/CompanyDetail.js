@@ -1731,6 +1731,14 @@ function CompanyDetail({ fixedCompanyId }) {
                 {cumulative.totalJobCreation}시간
               </div>
             </div>
+            <div>
+              <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.5rem' }}>
+                누적 지원 금액
+              </div>
+              <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#F59E0B' }}>
+                {(cumulative.totalFunding / 10000).toLocaleString()}만원
+              </div>
+            </div>
           </div>
 
           {timeSeries && timeSeries.length > 0 && (
