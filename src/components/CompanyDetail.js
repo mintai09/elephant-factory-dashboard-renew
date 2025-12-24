@@ -576,7 +576,14 @@ function CompanyDetail({ fixedCompanyId }) {
               지원 금액
             </div>
             <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#F59E0B' }}>
-              {((performance.jobCreation || 0) * 50000).toLocaleString()}원
+              {(() => {
+                // 최신 분기의 funding 값 가져오기
+                const latestQuarter = timeSeries && timeSeries.length > 0
+                  ? timeSeries[timeSeries.length - 1]
+                  : null;
+                const fundingAmount = latestQuarter?.funding || 0;
+                return `${(fundingAmount / 10000).toLocaleString()}만원`;
+              })()}
             </div>
           </div>
         </div>
