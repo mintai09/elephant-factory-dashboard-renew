@@ -232,8 +232,8 @@ function CompanyDetail({ fixedCompanyId }) {
         reduction: Math.round((quarterData.co2 / kpi.carbonReduction.monthly) * kpi.carbonReduction.reduction),
         grade: kpi.carbonReduction.grade,
         breakdown: kpi.carbonReduction.breakdown ? {
-          plastic: kpi.carbonReduction.breakdown.plastic ? Math.round(kpi.carbonReduction.breakdown.plastic * ratio) : 0,
-          toys: kpi.carbonReduction.breakdown.toys ? Math.round(kpi.carbonReduction.breakdown.toys * ratio) : 0,
+          plastic: kpi.carbonReduction.breakdown.plastic ? parseFloat((kpi.carbonReduction.breakdown.plastic * ratio).toFixed(2)) : 0,
+          toys: kpi.carbonReduction.breakdown.toys ? parseFloat((kpi.carbonReduction.breakdown.toys * ratio).toFixed(2)) : 0,
           total: kpi.carbonReduction.breakdown.total ? parseFloat((kpi.carbonReduction.breakdown.total * ratio).toFixed(2)) : 0
         } : undefined,
         wasteDetail: kpi.carbonReduction.wasteDetail ? {
