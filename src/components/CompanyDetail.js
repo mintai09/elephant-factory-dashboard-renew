@@ -247,7 +247,7 @@ function CompanyDetail({ fixedCompanyId }) {
     };
 
     // 분기별 Tier2 KPI 계산
-    const quarterlyTier2KPI = tier2KPI ? {
+    const quarterlyTier2KPI = tier2KPI && tier2KPI.energySaving && tier2KPI.wasteReduction ? {
       energySaving: {
         monthlyKWh: Math.round(tier2KPI.energySaving.monthlyKWh * ratio),
         co2Equivalent: parseFloat((tier2KPI.energySaving.co2Equivalent * ratio).toFixed(2)),
