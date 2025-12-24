@@ -514,56 +514,47 @@ function CompanyDetail({ fixedCompanyId }) {
           <div className="card">
             <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>👥</div>
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.25rem' }}>
-              참여 임직원
+              누적 참여 임직원
             </div>
             <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#374151' }}>
-              {performance.participants}명
-            </div>
-            <div className="badge badge-success" style={{ marginTop: '0.5rem' }}>
-              🥇 {performance.ranking.participants}위/12개
+              {cumulative.totalParticipants.toLocaleString()}명
             </div>
           </div>
 
           <div className="card">
             <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📦</div>
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.25rem' }}>
-              수거량
+              누적 수거량
             </div>
             <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#374151' }}>
-              {performance.collectionAmount.toLocaleString()}kg
-            </div>
-            <div className="badge badge-success" style={{ marginTop: '0.5rem' }}>
-              🥇 {performance.ranking.collection}위/12개
+              {cumulative.totalCollection.toLocaleString()}kg
             </div>
           </div>
 
           <div className="card">
             <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🌍</div>
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.25rem' }}>
-              CO₂ 절감량
+              누적 CO₂ 절감량
             </div>
             <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#3B82F6' }}>
-              {performance.co2Reduction}톤
-            </div>
-            <div className="badge badge-success" style={{ marginTop: '0.5rem' }}>
-              🥇 {performance.ranking.co2}위/12개
+              {cumulative.totalCO2Reduction}톤
             </div>
           </div>
 
           <div className="card">
             <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>👴</div>
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.25rem' }}>
-              일자리 창출
+              누적 일자리 창출
             </div>
             <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#374151' }}>
-              {performance.jobCreation}명
+              {cumulative.totalJobCreation.toLocaleString()}시간
             </div>
           </div>
 
           <div className="card">
             <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🎁</div>
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.25rem' }}>
-              수혜 아동
+              수혜 아동 (최신)
             </div>
             <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#374151' }}>
               {performance.childrenSupported}명
@@ -573,17 +564,10 @@ function CompanyDetail({ fixedCompanyId }) {
           <div className="card">
             <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💰</div>
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.25rem' }}>
-              지원 금액
+              누적 지원 금액
             </div>
             <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#F59E0B' }}>
-              {(() => {
-                // 최신 분기의 funding 값 가져오기
-                const latestQuarter = timeSeries && timeSeries.length > 0
-                  ? timeSeries[timeSeries.length - 1]
-                  : null;
-                const fundingAmount = latestQuarter?.funding || 0;
-                return `${(fundingAmount / 10000).toLocaleString()}만원`;
-              })()}
+              {(cumulative.totalFunding / 10000).toLocaleString()}만원
             </div>
           </div>
         </div>
