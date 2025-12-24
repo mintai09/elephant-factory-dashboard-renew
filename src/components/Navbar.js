@@ -87,31 +87,11 @@ function Navbar() {
       <nav className="navbar" style={{ '--nav-accent': accentColor, '--nav-accent-soft': accentSoft }}>
         <div className="navbar-container">
           <Link to="/" className="logo" aria-label="코끼리공장 홈">
-            <span className="logo-icon" aria-hidden>
-              <svg width="32" height="32" viewBox="0 0 64 64" role="presentation">
-                <defs>
-                  <linearGradient id="logoBody" x1="10" y1="14" x2="52" y2="46" gradientUnits="userSpaceOnUse">
-                    <stop offset="0" stopColor="var(--nav-accent)" />
-                    <stop offset="1" stopColor="var(--nav-accent-soft)" />
-                  </linearGradient>
-                </defs>
-                <path
-                  className="logo-body"
-                  d="M14 30c0-9.4 7.6-17 17-17h9c7.2 0 13 5.8 13 13v13c0 3.9-3.1 7-7 7h-8.5c-2.7 0-4.9-2.2-4.9-4.9s2.2-4.9 4.9-4.9H42c1.7 0 3-1.3 3-3v-6c0-2.2-1.8-4-4-4H28.5c-4 0-7.3 3.1-7.5 7l-0.3 6.5c-0.1 2.5-2.1 4.4-4.6 4.4H14V30z"
-                  fill="url(#logoBody)"
-                />
-                <circle className="logo-ear" cx="23.5" cy="27" r="7" fill="var(--nav-accent-soft)" />
-                <circle className="logo-eye" cx="41" cy="25" r="2.4" fill="#0F172A" opacity="0.85" />
-                <path
-                  className="logo-tusk"
-                  d="M47 40c0 3.6-2.9 6.5-6.5 6.5H38"
-                  stroke="var(--nav-accent)"
-                  strokeWidth="2.75"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-            <span className="logo-text">코끼리공장</span>
+            <img
+              src="/k_logo_mo3.png"
+              alt="코끼리 공장"
+              style={{ height: '40px', width: 'auto' }}
+            />
           </Link>
 
           <button
