@@ -1,19 +1,147 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 import { getCompanyData } from '../data/companiesData';
+import { exportToPDF, exportToExcel, exportToPNG } from '../utils/exportUtils';
 
 function CompanyDetail({ fixedCompanyId }) {
   const { companyId: urlCompanyId } = useParams();
   const companyId = fixedCompanyId || urlCompanyId;
   const data = getCompanyData(companyId);
+  const [isExporting, setIsExporting] = useState(false);
+  const [activeTooltip, setActiveTooltip] = useState(null);
+  const [selectedYear, setSelectedYear] = useState('all'); // 'all', '2024', '2025'
+  const [selectedQuarter, setSelectedQuarter] = useState('all'); // 'all', 'Q1', 'Q2', 'Q3', 'Q4'
+  const [isTier2Collapsed, setIsTier2Collapsed] = useState(true); // 보조 KPI 토글
+
+  // 툴팁 토글 함수
+  const toggleTooltip = (tooltipId) => {
+    setActiveTooltip(activeTooltip === tooltipId ? null : tooltipId);
+  };
 
   // 로그인 사용자 정보 확인
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null');
   const isAdmin = userInfo && userInfo.role === 'admin';
+
+  // Export 핸들러
+  const handlePDFExport = async () => {
+    setIsExporting(true);
+    const result = await exportToPDF(data);
+    setIsExporting(false);
+    if (result.success) {
+      alert(result.message);
+    } else {
+      alert(result.message);
+    }
+  };
+
+  const handleExcelExport = () => {
+    setIsExporting(true);
+    const result = exportToExcel(data);
+    setIsExporting(false);
+    if (result.success) {
+      alert(result.message);
+    } else {
+      alert(result.message);
+    }
+  };
+
+  const handlePNGExport = async () => {
+    setIsExporting(true);
+    const result = await exportToPNG('root', `${data.info.name}_Dashboard`);
+    setIsExporting(false);
+    if (result.success) {
+      alert(result.message);
+    } else {
+      alert(result.message);
+    }
+  };
+
+  // 분기별 결과 전용 Export 핸들러
+  const handleQuarterlyPDFExport = async () => {
+    setIsExporting(true);
+    const quarterLabel = getFilteredQuarterLabel();
+    const element = document.getElementById('quarterly-results-section');
+    if (!element) {
+      alert('분기별 결과 섹션을 찾을 수 없습니다.');
+      setIsExporting(false);
+      return;
+    }
+
+    try {
+      const html2pdf = (await import('html2pdf.js')).default;
+      await html2pdf()
+        .set({
+          margin: 10,
+          filename: `${data.info.name}_${quarterLabel}_분기별결과.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        })
+        .from(element)
+        .save();
+      alert(`PDF 다운로드가 완료되었습니다: ${data.info.name}_${quarterLabel}_분기별결과.pdf`);
+    } catch (error) {
+      alert('PDF 생성 중 오류가 발생했습니다.');
+      console.error(error);
+    }
+    setIsExporting(false);
+  };
+
+  const handleQuarterlyPNGExport = async () => {
+    setIsExporting(true);
+    const quarterLabel = getFilteredQuarterLabel();
+    const element = document.getElementById('quarterly-results-section');
+    if (!element) {
+      alert('분기별 결과 섹션을 찾을 수 없습니다.');
+      setIsExporting(false);
+      return;
+    }
+
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      });
+
+      const link = document.createElement('a');
+      link.download = `${data.info.name}_${quarterLabel}_분기별결과.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      alert(`PNG 다운로드가 완료되었습니다: ${data.info.name}_${quarterLabel}_분기별결과.png`);
+    } catch (error) {
+      alert('PNG 생성 중 오류가 발생했습니다.');
+      console.error(error);
+    }
+    setIsExporting(false);
+  };
+
+  const handleQuarterlyExcelExport = () => {
+    setIsExporting(true);
+    const quarterLabel = getFilteredQuarterLabel();
+
+    // 분기별 데이터만 추출
+    const quarterlyData = {
+      info: data.info,
+      quarter: quarterLabel,
+      kpi: kpi,
+      tier2KPI: tier2KPI,
+      tier3KPI: tier3KPI
+    };
+
+    const result = exportToExcel(quarterlyData, `${data.info.name}_${quarterLabel}_분기별결과`);
+    setIsExporting(false);
+    if (result.success) {
+      alert(result.message);
+    } else {
+      alert(result.message);
+    }
+  };
 
   // 기업 데이터가 없으면 에러 메시지 표시
   if (!data) {
@@ -36,6 +164,179 @@ function CompanyDetail({ fixedCompanyId }) {
 
   const { info, performance, kpi, tier2KPI, tier3KPI, campaigns, cumulative, timeSeries, esgScores, media } = data;
 
+  // 연도/분기 필터링 함수
+  const getFilteredQuarterLabel = () => {
+    if (selectedYear === 'all' && selectedQuarter === 'all') {
+      return '전체 기간';
+    } else if (selectedYear === 'all') {
+      return `전체 ${selectedQuarter}`;
+    } else if (selectedQuarter === 'all') {
+      return `${selectedYear}년 전체`;
+    } else {
+      return `${selectedYear} ${selectedQuarter}`;
+    }
+  };
+
+  // 선택된 연도/분기에 해당하는 데이터가 있는지 확인
+  const hasQuarterlyData = () => {
+    if (selectedYear === 'all' || selectedQuarter === 'all') {
+      return true; // 전체 선택 시 항상 데이터 있음
+    }
+
+    // timeSeries에서 해당 분기 데이터 찾기
+    const quarterLabel = `${selectedQuarter}'${selectedYear.slice(2)}`;
+    return timeSeries && timeSeries.some(item => item.quarter === quarterLabel);
+  };
+
+  const isDataAvailable = hasQuarterlyData();
+
+  // 선택된 분기의 데이터를 가져오는 함수
+  const getQuarterlyData = () => {
+    if (selectedYear === 'all' || selectedQuarter === 'all') {
+      // 전체 기간 선택 시 현재 데이터 반환 (누적 또는 최신)
+      return {
+        performance,
+        kpi,
+        tier2KPI,
+        tier3KPI
+      };
+    }
+
+    // 특정 분기 선택 시 해당 분기 데이터 계산
+    const quarterLabel = `${selectedQuarter}'${selectedYear.slice(2)}`;
+    const quarterData = timeSeries.find(item => item.quarter === quarterLabel);
+
+    if (!quarterData) {
+      return null;
+    }
+
+    // 분기별 데이터를 기반으로 KPI 재계산
+    // 실제로는 분기별 상세 데이터가 있어야 하지만, 여기서는 timeSeries 데이터를 기반으로 비율 계산
+    const ratio = quarterData.collection / performance.collectionAmount;
+
+    // 분기별 성과 계산
+    const quarterlyPerformance = {
+      participants: Math.round(quarterData.participants),
+      collectionAmount: quarterData.collection,
+      co2Reduction: quarterData.co2,
+      jobCreation: Math.round(performance.jobCreation * ratio),
+      childrenSupported: Math.round(performance.childrenSupported * ratio),
+      participationRate: Math.round((quarterData.participants / performance.participants) * performance.participationRate)
+    };
+
+    // 분기별 KPI 계산 (비율 적용)
+    const quarterlyKPI = {
+      carbonReduction: {
+        monthly: quarterData.co2,
+        baseline: kpi.carbonReduction.baseline,
+        reduction: Math.round((quarterData.co2 / kpi.carbonReduction.monthly) * kpi.carbonReduction.reduction),
+        grade: kpi.carbonReduction.grade
+      },
+      circularResource: {
+        collected: quarterData.collection,
+        produced: Math.round(kpi.circularResource.produced * ratio),
+        conversionRate: kpi.circularResource.conversionRate,
+        grade: kpi.circularResource.grade
+      },
+      socialImpact: {
+        jobs: Math.round(performance.jobCreation * ratio),
+        education: Math.round(performance.childrenSupported * ratio),
+        monthlyValue: Math.round(kpi.socialImpact.monthlyValue * ratio),
+        grade: kpi.socialImpact.grade
+      }
+    };
+
+    // 분기별 Tier2 KPI 계산
+    const quarterlyTier2KPI = tier2KPI ? {
+      energySaving: {
+        monthlyKWh: Math.round(tier2KPI.energySaving.monthlyKWh * ratio),
+        co2Equivalent: parseFloat((tier2KPI.energySaving.co2Equivalent * ratio).toFixed(2)),
+        costSaving: Math.round(tier2KPI.energySaving.costSaving * ratio),
+        grade: tier2KPI.energySaving.grade
+      },
+      wasteReduction: {
+        totalWeight: Math.round(tier2KPI.wasteReduction.totalWeight * ratio),
+        monthlyReduction: Math.round(tier2KPI.wasteReduction.monthlyReduction * ratio),
+        reductionRate: tier2KPI.wasteReduction.reductionRate,
+        breakdown: {
+          plastic: Math.round(tier2KPI.wasteReduction.breakdown.plastic * ratio),
+          paper: Math.round(tier2KPI.wasteReduction.breakdown.paper * ratio),
+          etc: Math.round(tier2KPI.wasteReduction.breakdown.etc * ratio)
+        },
+        grade: tier2KPI.wasteReduction.grade
+      },
+      educationReach: {
+        totalReach: Math.round(tier2KPI.educationReach.totalReach * ratio),
+        weightedScore: Math.round(tier2KPI.educationReach.weightedScore * ratio),
+        breakdown: {
+          employees: Math.round(tier2KPI.educationReach.breakdown.employees * ratio),
+          partners: Math.round(tier2KPI.educationReach.breakdown.partners * ratio),
+          community: Math.round(tier2KPI.educationReach.breakdown.community * ratio)
+        },
+        grade: tier2KPI.educationReach.grade
+      },
+      supplyChainEngagement: {
+        totalPartners: tier2KPI.supplyChainEngagement.totalPartners,
+        activePartners: Math.round(tier2KPI.supplyChainEngagement.activePartners * ratio),
+        engagementRate: Math.round(tier2KPI.supplyChainEngagement.engagementRate * ratio),
+        grade: tier2KPI.supplyChainEngagement.grade
+      },
+      upcyclingValue: {
+        rawMaterialValue: Math.round(tier2KPI.upcyclingValue.rawMaterialValue * ratio),
+        finalProductValue: Math.round(tier2KPI.upcyclingValue.finalProductValue * ratio),
+        valueAddedRate: tier2KPI.upcyclingValue.valueAddedRate,
+        breakdown: {
+          rawMaterialValue: Math.round(tier2KPI.upcyclingValue.breakdown.rawMaterialValue * ratio),
+          finalProductValue: Math.round(tier2KPI.upcyclingValue.breakdown.finalProductValue * ratio)
+        },
+        grade: tier2KPI.upcyclingValue.grade
+      }
+    } : null;
+
+    // 분기별 ESG 임팩트 스코어 재계산
+    const eScore = Math.round((quarterlyKPI.carbonReduction.reduction / 100) * 50 + 30); // 간단한 계산
+    const sScore = Math.round((quarterlyKPI.socialImpact.monthlyValue / 5000000) * 100);
+    const gScore = 82; // 거버넌스는 동일
+    const totalScore = Math.round((eScore * 0.4) + (sScore * 0.4) + (gScore * 0.2));
+
+    let grade = 'C';
+    let gradeDescription = '보통';
+    if (totalScore >= 90) {
+      grade = 'S';
+      gradeDescription = '최우수';
+    } else if (totalScore >= 80) {
+      grade = 'A';
+      gradeDescription = '우수';
+    } else if (totalScore >= 70) {
+      grade = 'B';
+      gradeDescription = '양호';
+    }
+
+    const quarterlyTier3KPI = {
+      eScore,
+      sScore,
+      gScore,
+      totalScore,
+      grade,
+      gradeDescription
+    };
+
+    return {
+      performance: quarterlyPerformance,
+      kpi: quarterlyKPI,
+      tier2KPI: quarterlyTier2KPI,
+      tier3KPI: quarterlyTier3KPI
+    };
+  };
+
+  // 현재 표시할 데이터 결정
+  const displayData = getQuarterlyData();
+
+  // 분기별 결과 섹션에서 사용할 데이터 (필터링된 데이터 또는 원본 데이터)
+  let quarterlyKPI = displayData?.kpi || kpi;
+  let quarterlyTier2KPI = displayData?.tier2KPI || tier2KPI;
+  let quarterlyTier3KPI = displayData?.tier3KPI || tier3KPI;
+
   return (
     <div className="main-content">
       {/* 뒤로가기 버튼 - 관리자만 표시 */}
@@ -50,7 +351,7 @@ function CompanyDetail({ fixedCompanyId }) {
       {/* 기업 헤더 */}
       <div className="section">
         <div className="card" style={{
-          background: 'linear-gradient(135deg, #10B981 0%, #3B82F6 100%)',
+          background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
           color: 'white'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
@@ -99,16 +400,84 @@ function CompanyDetail({ fixedCompanyId }) {
         </div>
       </div>
 
-      {/* 2025 Q1 성과 요약 */}
+      {/* 전체 ESG 성과 요약 */}
       <div className="section">
-        <h2 className="section-title">📊 2025 Q1 성과 요약</h2>
+        <h2 className="section-title">📊 전체 ESG 성과 요약 (누적)</h2>
+
+        {/* ESG 임팩트 스코어 카드 */}
+        {tier3KPI && (
+          <div className="card" style={{ marginBottom: '2rem' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '1.5rem',
+              background: tier3KPI.grade === 'S' ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' :
+                          tier3KPI.grade === 'A' ? 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)' :
+                          'linear-gradient(135deg, #6B7280 0%, #4B5563 100%)',
+              borderRadius: '1rem',
+              color: 'white',
+              marginBottom: '1.5rem'
+            }}>
+              <div>
+                <div style={{ fontSize: '0.875rem', opacity: 0.9, marginBottom: '0.25rem' }}>ESG 임팩트 스코어</div>
+                <div style={{ fontSize: '3rem', fontWeight: '700' }}>{tier3KPI.totalScore}점</div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{
+                  display: 'inline-block',
+                  padding: '0.75rem 1.5rem',
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '0.75rem',
+                  backdropFilter: 'blur(10px)'
+                }}>
+                  <div style={{ fontSize: '2rem', fontWeight: '700' }}>{tier3KPI.grade}</div>
+                  <div style={{ fontSize: '0.875rem', opacity: 0.9 }}>{tier3KPI.gradeDescription}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* E, S, G 비율 간단 표현 */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '1rem'
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.5rem' }}>🌍 환경 (E)</div>
+                <div className="progress-bar-container">
+                  <div className="progress-bar" style={{ width: `${esgScores.environmental}%`, backgroundColor: '#10B981' }}>
+                    {esgScores.environmental}%
+                  </div>
+                </div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.5rem' }}>🤝 사회 (S)</div>
+                <div className="progress-bar-container">
+                  <div className="progress-bar" style={{ width: `${esgScores.social}%`, backgroundColor: '#3B82F6' }}>
+                    {esgScores.social}%
+                  </div>
+                </div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.5rem' }}>💼 지배구조 (G)</div>
+                <div className="progress-bar-container">
+                  <div className="progress-bar" style={{ width: `${esgScores.governance}%`, backgroundColor: '#6B7280' }}>
+                    {esgScores.governance}%
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="card-grid">
           <div className="card">
             <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>👥</div>
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.25rem' }}>
               참여 임직원
             </div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#10B981' }}>
+            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#374151' }}>
               {performance.participants}명
             </div>
             <div className="badge badge-success" style={{ marginTop: '0.5rem' }}>
@@ -121,7 +490,7 @@ function CompanyDetail({ fixedCompanyId }) {
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.25rem' }}>
               수거량
             </div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#10B981' }}>
+            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#374151' }}>
               {performance.collectionAmount.toLocaleString()}kg
             </div>
             <div className="badge badge-success" style={{ marginTop: '0.5rem' }}>
@@ -134,7 +503,7 @@ function CompanyDetail({ fixedCompanyId }) {
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.25rem' }}>
               CO₂ 절감량
             </div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#10B981' }}>
+            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#3B82F6' }}>
               {performance.co2Reduction}톤
             </div>
             <div className="badge badge-success" style={{ marginTop: '0.5rem' }}>
@@ -147,8 +516,8 @@ function CompanyDetail({ fixedCompanyId }) {
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.25rem' }}>
               일자리 창출
             </div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#3B82F6' }}>
-              {performance.jobCreation}시간
+            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#374151' }}>
+              {performance.jobCreation}명
             </div>
           </div>
 
@@ -157,39 +526,274 @@ function CompanyDetail({ fixedCompanyId }) {
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.25rem' }}>
               수혜 아동
             </div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#3B82F6' }}>
+            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#374151' }}>
               {performance.childrenSupported}명
             </div>
           </div>
 
           <div className="card">
-            <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📊</div>
+            <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💰</div>
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.25rem' }}>
-              참여율
+              기부 금액
             </div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#F59E0B' }}>
-              {performance.participationRate}%
+            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#10B981' }}>
+              {((performance.jobCreation || 0) * 50000).toLocaleString()}원
             </div>
           </div>
         </div>
       </div>
 
-      {/* Tier 1 핵심 KPI */}
-      <div className="section">
-        <h2 className="section-title">🔑 핵심 KPI (Tier 1)</h2>
+      {/* 분기별 결과 */}
+      <div className="section" id="quarterly-results-section">
+        <h2 className="section-title">📅 분기별 결과 - {getFilteredQuarterLabel()}</h2>
+        <p className="section-subtitle">
+          선택한 기간의 상세 성과를 확인하세요
+        </p>
 
+        {/* 연도 및 분기 선택 */}
+        <div style={{
+          display: 'flex',
+          gap: '1.5rem',
+          marginBottom: '1.5rem',
+          flexWrap: 'wrap',
+          alignItems: 'center'
+        }}>
+          {/* 연도 선택 */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.875rem', color: '#6B7280', fontWeight: '500' }}>연도:</span>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                onClick={() => setSelectedYear('all')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  border: selectedYear === 'all' ? '2px solid #3B82F6' : '1px solid #D1D5DB',
+                  backgroundColor: selectedYear === 'all' ? '#EFF6FF' : 'white',
+                  color: selectedYear === 'all' ? '#3B82F6' : '#6B7280',
+                  borderRadius: '0.375rem',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem',
+                  fontWeight: selectedYear === 'all' ? '600' : '500',
+                  transition: 'all 0.2s'
+                }}
+              >
+                전체
+              </button>
+              <button
+                onClick={() => setSelectedYear('2024')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  border: selectedYear === '2024' ? '2px solid #3B82F6' : '1px solid #D1D5DB',
+                  backgroundColor: selectedYear === '2024' ? '#EFF6FF' : 'white',
+                  color: selectedYear === '2024' ? '#3B82F6' : '#6B7280',
+                  borderRadius: '0.375rem',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem',
+                  fontWeight: selectedYear === '2024' ? '600' : '500',
+                  transition: 'all 0.2s'
+                }}
+              >
+                2024
+              </button>
+              <button
+                onClick={() => setSelectedYear('2025')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  border: selectedYear === '2025' ? '2px solid #3B82F6' : '1px solid #D1D5DB',
+                  backgroundColor: selectedYear === '2025' ? '#EFF6FF' : 'white',
+                  color: selectedYear === '2025' ? '#3B82F6' : '#6B7280',
+                  borderRadius: '0.375rem',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem',
+                  fontWeight: selectedYear === '2025' ? '600' : '500',
+                  transition: 'all 0.2s'
+                }}
+              >
+                2025
+              </button>
+            </div>
+          </div>
+
+          {/* 분기 선택 */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.875rem', color: '#6B7280', fontWeight: '500' }}>분기:</span>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                onClick={() => setSelectedQuarter('all')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  border: selectedQuarter === 'all' ? '2px solid #10B981' : '1px solid #D1D5DB',
+                  backgroundColor: selectedQuarter === 'all' ? '#D1FAE5' : 'white',
+                  color: selectedQuarter === 'all' ? '#059669' : '#6B7280',
+                  borderRadius: '0.375rem',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem',
+                  fontWeight: selectedQuarter === 'all' ? '600' : '500',
+                  transition: 'all 0.2s'
+                }}
+              >
+                전체
+              </button>
+              {['Q1', 'Q2', 'Q3', 'Q4'].map(quarter => (
+                <button
+                  key={quarter}
+                  onClick={() => setSelectedQuarter(quarter)}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    border: selectedQuarter === quarter ? '2px solid #10B981' : '1px solid #D1D5DB',
+                    backgroundColor: selectedQuarter === quarter ? '#D1FAE5' : 'white',
+                    color: selectedQuarter === quarter ? '#059669' : '#6B7280',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer',
+                    fontSize: '0.875rem',
+                    fontWeight: selectedQuarter === quarter ? '600' : '500',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {quarter}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* 분기별 ESG 임팩트 스코어 */}
+        {quarterlyTier3KPI && (
+          <div className="card" style={{ marginBottom: '2rem' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '1.5rem',
+              background: quarterlyTier3KPI.grade === 'S' ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' :
+                          quarterlyTier3KPI.grade === 'A' ? 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)' :
+                          'linear-gradient(135deg, #6B7280 0%, #4B5563 100%)',
+              borderRadius: '0.75rem',
+              color: 'white'
+            }}>
+              <div>
+                <div style={{ fontSize: '0.75rem', opacity: 0.9, marginBottom: '0.25rem' }}>분기별 ESG 임팩트 스코어</div>
+                <div style={{ fontSize: '2.5rem', fontWeight: '700' }}>{quarterlyTier3KPI.totalScore}점</div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{
+                  display: 'inline-block',
+                  padding: '0.5rem 1rem',
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '0.5rem',
+                  backdropFilter: 'blur(10px)'
+                }}>
+                  <div style={{ fontSize: '2rem', fontWeight: '700' }}>{quarterlyTier3KPI.grade}</div>
+                  <div style={{ fontSize: '0.75rem', opacity: 0.9 }}>{quarterlyTier3KPI.gradeDescription}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 분기별 다운로드 버튼 */}
+        <div style={{
+          display: 'flex',
+          gap: '0.75rem',
+          marginBottom: '2rem',
+          flexWrap: 'wrap'
+        }}>
+          <button
+            className="btn btn-outline"
+            onClick={handleQuarterlyPDFExport}
+            disabled={isExporting}
+            style={{ flex: '1', minWidth: '120px' }}
+          >
+            📄 PDF 다운로드
+          </button>
+          <button
+            className="btn btn-outline"
+            onClick={handleQuarterlyPNGExport}
+            disabled={isExporting}
+            style={{ flex: '1', minWidth: '120px' }}
+          >
+            🖼️ PNG 다운로드
+          </button>
+          <button
+            className="btn btn-outline"
+            onClick={handleQuarterlyExcelExport}
+            disabled={isExporting}
+            style={{ flex: '1', minWidth: '120px' }}
+          >
+            📊 Excel 다운로드
+          </button>
+        </div>
+
+        {/* 데이터 없음 메시지 */}
+        {!isDataAvailable ? (
+          <div className="card" style={{
+            padding: '3rem',
+            textAlign: 'center',
+            backgroundColor: '#F9FAFB',
+            border: '2px dashed #D1D5DB'
+          }}>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📊</div>
+            <h3 style={{ fontSize: '1.5rem', color: '#374151', marginBottom: '0.5rem' }}>
+              해당 분기 데이터가 없습니다
+            </h3>
+            <p style={{ color: '#6B7280', fontSize: '0.875rem' }}>
+              {getFilteredQuarterLabel()}에 대한 데이터가 아직 등록되지 않았습니다.
+            </p>
+          </div>
+        ) : (
+          <>
         {/* KPI #1: 탄소 저감 기여도 - 상세 정보 */}
         <div className="card" style={{ marginBottom: '2rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div style={{ fontSize: '2.5rem' }}>🌍</div>
               <div>
-                <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
-                  탄소 저감 기여도
-                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
+                    탄소 저감 기여도
+                  </h3>
+                  <button
+                    onClick={() => toggleTooltip('carbon')}
+                    style={{
+                      background: '#10B981',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '50%',
+                      width: '24px',
+                      height: '24px',
+                      cursor: 'pointer',
+                      fontSize: '0.875rem',
+                      fontWeight: '700',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}
+                    title="자세히 보기"
+                  >
+                    ?
+                  </button>
+                </div>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
                   폐기물 순환을 통한 CO₂ 절감 효과
                 </div>
+                {activeTooltip === 'carbon' && (
+                  <div style={{
+                    marginTop: '1rem',
+                    padding: '1rem',
+                    backgroundColor: '#F0FDF4',
+                    borderRadius: '0.5rem',
+                    borderLeft: '4px solid #10B981',
+                    fontSize: '0.875rem',
+                    lineHeight: '1.6',
+                    color: '#065F46'
+                  }}>
+                    <strong>📊 탄소 저감 기여도란?</strong><br/>
+                    폐플라스틱과 장난감을 수거하여 업사이클링하는 과정에서 발생하는 CO₂ 절감량을 측정합니다.
+                    신규 원자재 생산 대비 얼마나 많은 탄소 배출을 줄였는지를 계산하여 환경(E) 성과로 평가합니다.
+                    <br/><br/>
+                    <strong>계산 방식:</strong> 수거량(kg) × 원자재별 CO₂ 환산계수
+                  </div>
+                )}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -197,28 +801,30 @@ function CompanyDetail({ fixedCompanyId }) {
                 총 CO₂ 저감량
               </div>
               <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#10B981' }}>
-                {kpi.carbonReduction.monthly} tonnes
+                {quarterlyKPI.carbonReduction.monthly} tonnes
               </div>
-              <div className={`badge badge-${kpi.carbonReduction.grade === '우수' ? 'success' : kpi.carbonReduction.grade === '양호' ? 'info' : 'warning'}`} style={{ marginTop: '0.5rem' }}>
-                {kpi.carbonReduction.grade}
+              <div className={`badge badge-${quarterlyKPI.carbonReduction.grade === '우수' ? 'success' : quarterlyKPI.carbonReduction.grade === '양호' ? 'info' : 'warning'}`} style={{ marginTop: '0.5rem' }}>
+                {quarterlyKPI.carbonReduction.grade}
               </div>
             </div>
           </div>
 
           {/* 목표 달성률 */}
+          {quarterlyKPI.carbonReduction.achieved && (
           <div style={{ marginBottom: '2rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
               <span style={{ fontSize: '0.875rem', color: '#6B7280' }}>목표 달성률</span>
               <span style={{ fontSize: '0.875rem', fontWeight: '600' }}>
-                {kpi.carbonReduction.achieved}% (목표 {kpi.carbonReduction.target} tonnes)
+                {quarterlyKPI.carbonReduction.achieved}% (목표 {quarterlyKPI.carbonReduction.target} tonnes)
               </span>
             </div>
             <div className="progress-bar-container">
-              <div className="progress-bar" style={{ width: `${Math.min(kpi.carbonReduction.achieved, 100)}%` }}>
-                {kpi.carbonReduction.achieved}%
+              <div className="progress-bar" style={{ width: `${Math.min(quarterlyKPI.carbonReduction.achieved, 100)}%` }}>
+                {quarterlyKPI.carbonReduction.achieved}%
               </div>
             </div>
           </div>
+          )}
 
           {/* CO₂ 저감 기여도 분석 */}
           <div style={{
@@ -241,20 +847,20 @@ function CompanyDetail({ fixedCompanyId }) {
 
               <div style={{ marginBottom: '1rem' }}>
                 <div style={{ fontSize: '2rem', fontWeight: '700', color: '#10B981' }}>
-                  {kpi.carbonReduction.breakdown.plastic} tonnes CO₂
+                  {quarterlyKPI.carbonReduction.breakdown.plastic} tonnes CO₂
                 </div>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280', marginTop: '0.25rem' }}>
-                  총 {kpi.carbonReduction.wasteDetail.plastic.total}kg 수거
+                  총 {quarterlyKPI.carbonReduction.wasteDetail.plastic.total}kg 수거
                 </div>
               </div>
 
               <div style={{ fontSize: '0.875rem', color: '#374151', lineHeight: '1.6' }}>
                 <div style={{ marginBottom: '0.5rem' }}>
-                  <strong>• PET 병:</strong> {kpi.carbonReduction.wasteDetail.plastic.pet}kg
+                  <strong>• PET 병:</strong> {quarterlyKPI.carbonReduction.wasteDetail.plastic.pet}kg
                   <span style={{ color: '#6B7280' }}> (2.29 × 2.5 UF)</span>
                 </div>
                 <div style={{ marginBottom: '0.5rem' }}>
-                  <strong>• HDPE 용기:</strong> {kpi.carbonReduction.wasteDetail.plastic.hdpe}kg
+                  <strong>• HDPE 용기:</strong> {quarterlyKPI.carbonReduction.wasteDetail.plastic.hdpe}kg
                   <span style={{ color: '#6B7280' }}> (3.12 × 2.5 UF)</span>
                 </div>
                 <div style={{
@@ -264,7 +870,7 @@ function CompanyDetail({ fixedCompanyId }) {
                   borderRadius: '0.5rem',
                   fontSize: '0.8125rem'
                 }}>
-                  <strong>📦 제작 제품:</strong> {kpi.carbonReduction.wasteDetail.plastic.processing}
+                  <strong>📦 제작 제품:</strong> {quarterlyKPI.carbonReduction.wasteDetail.plastic.processing}
                 </div>
               </div>
             </div>
@@ -272,9 +878,9 @@ function CompanyDetail({ fixedCompanyId }) {
             {/* 장난감 순환 경로 */}
             <div style={{
               padding: '1.5rem',
-              backgroundColor: '#FEF3C7',
+              backgroundColor: '#F9FAFB',
               borderRadius: '0.75rem',
-              borderLeft: '4px solid #F59E0B'
+              borderLeft: '4px solid #6B7280'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
                 <span style={{ fontSize: '1.5rem' }}>🧸</span>
@@ -282,25 +888,25 @@ function CompanyDetail({ fixedCompanyId }) {
               </div>
 
               <div style={{ marginBottom: '1rem' }}>
-                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#F59E0B' }}>
-                  {kpi.carbonReduction.breakdown.toys} tonnes CO₂
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#6B7280' }}>
+                  {quarterlyKPI.carbonReduction.breakdown.toys} tonnes CO₂
                 </div>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280', marginTop: '0.25rem' }}>
-                  총 {kpi.carbonReduction.wasteDetail.toys.total}kg 수거
+                  총 {quarterlyKPI.carbonReduction.wasteDetail.toys.total}kg 수거
                 </div>
               </div>
 
               <div style={{ fontSize: '0.875rem', color: '#374151', lineHeight: '1.6' }}>
                 <div style={{ marginBottom: '0.5rem' }}>
-                  <strong>• 재사용:</strong> {kpi.carbonReduction.wasteDetail.toys.reuse}kg
+                  <strong>• 재사용:</strong> {quarterlyKPI.carbonReduction.wasteDetail.toys.reuse}kg
                   <span style={{ color: '#6B7280' }}> (2.75 × 3.0 RBF)</span>
                 </div>
                 <div style={{ marginBottom: '0.5rem' }}>
-                  <strong>• 업사이클링:</strong> {kpi.carbonReduction.wasteDetail.toys.upcycling}kg
+                  <strong>• 업사이클링:</strong> {quarterlyKPI.carbonReduction.wasteDetail.toys.upcycling}kg
                   <span style={{ color: '#6B7280' }}> (2.75 × 2.5 UF)</span>
                 </div>
                 <div style={{ marginBottom: '0.5rem' }}>
-                  <strong>• 재활용:</strong> {kpi.carbonReduction.wasteDetail.toys.recycling}kg
+                  <strong>• 재활용:</strong> {quarterlyKPI.carbonReduction.wasteDetail.toys.recycling}kg
                   <span style={{ color: '#6B7280' }}> (2.75 × 1.0)</span>
                 </div>
                 <div style={{
@@ -316,19 +922,19 @@ function CompanyDetail({ fixedCompanyId }) {
                 }}>
                   <div>
                     <div style={{ fontWeight: '600', color: '#10B981' }}>
-                      {Math.round(kpi.carbonReduction.wasteDetail.toys.reuse / kpi.carbonReduction.wasteDetail.toys.total * 100)}%
+                      {Math.round(quarterlyKPI.carbonReduction.wasteDetail.toys.reuse / quarterlyKPI.carbonReduction.wasteDetail.toys.total * 100)}%
                     </div>
                     <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>재사용</div>
                   </div>
                   <div>
                     <div style={{ fontWeight: '600', color: '#3B82F6' }}>
-                      {Math.round(kpi.carbonReduction.wasteDetail.toys.upcycling / kpi.carbonReduction.wasteDetail.toys.total * 100)}%
+                      {Math.round(quarterlyKPI.carbonReduction.wasteDetail.toys.upcycling / quarterlyKPI.carbonReduction.wasteDetail.toys.total * 100)}%
                     </div>
                     <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>업사이클</div>
                   </div>
                   <div>
                     <div style={{ fontWeight: '600', color: '#6B7280' }}>
-                      {Math.round(kpi.carbonReduction.wasteDetail.toys.recycling / kpi.carbonReduction.wasteDetail.toys.total * 100)}%
+                      {Math.round(quarterlyKPI.carbonReduction.wasteDetail.toys.recycling / quarterlyKPI.carbonReduction.wasteDetail.toys.total * 100)}%
                     </div>
                     <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>재활용</div>
                   </div>
@@ -349,7 +955,7 @@ function CompanyDetail({ fixedCompanyId }) {
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🌲</div>
               <div style={{ fontSize: '1.75rem', fontWeight: '700', color: '#10B981' }}>
-                {Math.round(kpi.carbonReduction.monthly * 1000 / 22)}그루
+                {Math.round(quarterlyKPI.carbonReduction.monthly * 1000 / 22)}그루
               </div>
               <div style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '0.25rem' }}>
                 소나무 1년 흡수량
@@ -358,7 +964,7 @@ function CompanyDetail({ fixedCompanyId }) {
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🚗</div>
               <div style={{ fontSize: '1.75rem', fontWeight: '700', color: '#10B981' }}>
-                {(kpi.carbonReduction.monthly / 4.6).toFixed(1)}대
+                {(quarterlyKPI.carbonReduction.monthly / 4.6).toFixed(1)}대
               </div>
               <div style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '0.25rem' }}>
                 승용차 1년 운행 중단
@@ -367,7 +973,7 @@ function CompanyDetail({ fixedCompanyId }) {
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🧊</div>
               <div style={{ fontSize: '1.75rem', fontWeight: '700', color: '#10B981' }}>
-                {Math.round(kpi.carbonReduction.monthly * 1000 * 0.00744)}m²
+                {Math.round(quarterlyKPI.carbonReduction.monthly * 1000 * 0.00744)}m²
               </div>
               <div style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '0.25rem' }}>
                 북극 빙하 보존
@@ -382,18 +988,57 @@ function CompanyDetail({ fixedCompanyId }) {
           {/* KPI #2: 순환 자원 */}
           <div className="card">
             <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>♻️</div>
-            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>
-              순환 자원 기여도
-            </h3>
-            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#10B981', marginBottom: '0.5rem' }}>
-              {kpi.circularResource.conversionRate}%
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+              <h3 style={{ fontSize: '1.25rem', margin: 0 }}>
+                순환 자원 기여도
+              </h3>
+              <button
+                onClick={() => toggleTooltip('circular')}
+                style={{
+                  background: '#10B981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '20px',
+                  height: '20px',
+                  cursor: 'pointer',
+                  fontSize: '0.75rem',
+                  fontWeight: '700',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}
+                title="자세히 보기"
+              >
+                ?
+              </button>
+            </div>
+            {activeTooltip === 'circular' && (
+              <div style={{
+                marginBottom: '1rem',
+                padding: '0.75rem',
+                backgroundColor: '#F0FDF4',
+                borderRadius: '0.5rem',
+                borderLeft: '3px solid #10B981',
+                fontSize: '0.75rem',
+                lineHeight: '1.5',
+                color: '#065F46'
+              }}>
+                <strong>♻️ 순환 자원 기여도란?</strong><br/>
+                수거한 폐자원이 업사이클링 제품으로 전환된 비율입니다.
+                순환경제 실현 정도를 나타내는 핵심 지표입니다.
+              </div>
+            )}
+            <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#374151', marginBottom: '0.5rem' }}>
+              {quarterlyKPI.circularResource.conversionRate}%
             </div>
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginTop: '0.5rem' }}>
-              수거 {kpi.circularResource.collected}kg → 제품 {kpi.circularResource.produced}kg
+              수거 {quarterlyKPI.circularResource.collected}kg → 제품 {quarterlyKPI.circularResource.produced}kg
             </div>
             <div style={{ marginTop: '1rem' }}>
               <div className="badge badge-success">
-                {kpi.circularResource.grade}
+                {quarterlyKPI.circularResource.grade}
               </div>
             </div>
           </div>
@@ -401,55 +1046,160 @@ function CompanyDetail({ fixedCompanyId }) {
           {/* KPI #3: 사회적 임팩트 */}
           <div className="card">
             <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🤝</div>
-            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>
-              사회적 임팩트 지수
-            </h3>
-            <div style={{ fontSize: '2rem', fontWeight: '700', color: '#3B82F6', marginBottom: '0.5rem' }}>
-              {(kpi.socialImpact.monthlyValue / 10000).toLocaleString()}만원
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+              <h3 style={{ fontSize: '1.25rem', margin: 0 }}>
+                사회적 임팩트 지수
+              </h3>
+              <button
+                onClick={() => toggleTooltip('social')}
+                style={{
+                  background: '#10B981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '20px',
+                  height: '20px',
+                  cursor: 'pointer',
+                  fontSize: '0.75rem',
+                  fontWeight: '700',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}
+                title="자세히 보기"
+              >
+                ?
+              </button>
+            </div>
+            {activeTooltip === 'social' && (
+              <div style={{
+                marginBottom: '1rem',
+                padding: '0.75rem',
+                backgroundColor: '#F0FDF4',
+                borderRadius: '0.5rem',
+                borderLeft: '3px solid #10B981',
+                fontSize: '0.75rem',
+                lineHeight: '1.5',
+                color: '#065F46'
+              }}>
+                <strong>🤝 사회적 임팩트 지수란?</strong><br/>
+                노인 일자리 창출, 취약계층 교육 등 사회적 가치를 화폐 단위로 환산한 지표입니다.
+                사회(S) 성과를 정량적으로 측정합니다.
+              </div>
+            )}
+            <div style={{ fontSize: '2rem', fontWeight: '700', color: '#374151', marginBottom: '0.5rem' }}>
+              {(quarterlyKPI.socialImpact.monthlyValue / 10000).toLocaleString()}만원
             </div>
             <div style={{ fontSize: '0.875rem', color: '#6B7280', marginTop: '0.5rem' }}>
-              일자리 {kpi.socialImpact.jobs}명 / 교육 {kpi.socialImpact.education}명
+              일자리 {quarterlyKPI.socialImpact.jobs}명 / 교육 {quarterlyKPI.socialImpact.education}명
             </div>
             <div style={{ marginTop: '1rem' }}>
               <div className="badge badge-success">
-                {kpi.socialImpact.grade}
+                {quarterlyKPI.socialImpact.grade}
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Tier 2 보조 KPI */}
-      {tier2KPI && (
-        <div className="section">
-          <h2 className="section-title">📊 Tier 2 보조 KPI (5개 지표)</h2>
-          <p className="section-subtitle">
-            분기별 측정 지표로 상세 분석 및 ESG 평가 대응에 활용됩니다.
-          </p>
+        {/* Tier 2 보조 KPI 토글 */}
+        {quarterlyTier2KPI {tier2KPI &&{tier2KPI && (
+          <>
+            <div style={{ marginTop: '2rem', marginBottom: '1rem' }}>
+              <button
+                onClick={() => setIsTier2Collapsed(!isTier2Collapsed)}
+                style={{
+                  width: '100%',
+                  padding: '1rem',
+                  backgroundColor: '#F9FAFB',
+                  border: '1px solid #E5E7EB',
+                  borderRadius: '0.5rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  color: '#374151',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F3F4F6'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'}
+              >
+                <span>📊 보조 KPI 상세 보기 (5개 지표)</span>
+                <span style={{ fontSize: '1.25rem' }}>{isTier2Collapsed ? '▼' : '▲'}</span>
+              </button>
+            </div>
 
-          {/* KPI #4: 에너지 절감 효과 */}
+            {!isTier2Collapsed && tier2KPI && (
+              <div style={{ marginTop: '1rem' }}>
+                <p style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '1.5rem' }}>
+                  분기별 측정 지표로 상세 분석 및 ESG 평가 대응에 활용됩니다.
+                </p>
+
           <div className="card" style={{ marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <div style={{ fontSize: '2.5rem' }}>⚡</div>
                 <div>
-                  <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
-                    KPI #4. 에너지 절감 효과 (E)
-                  </h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
+                      에너지 절감 효과 (E)
+                    </h3>
+                    <button
+                      onClick={() => toggleTooltip('tier2-energy')}
+                      style={{
+                        background: '#10B981',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '24px',
+                        height: '24px',
+                        cursor: 'pointer',
+                        fontSize: '0.875rem',
+                        fontWeight: '700',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                      }}
+                      title="자세히 보기"
+                    >
+                      ?
+                    </button>
+                  </div>
                   <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
                     제품 생산 과정에서 절감되는 에너지량
                   </div>
+                  {activeTooltip === 'tier2-energy' && (
+                    <div style={{
+                      marginTop: '1rem',
+                      padding: '1rem',
+                      backgroundColor: '#F0FDF4',
+                      borderRadius: '0.5rem',
+                      borderLeft: '4px solid #10B981',
+                      fontSize: '0.875rem',
+                      lineHeight: '1.6',
+                      color: '#065F46'
+                    }}>
+                      <strong>⚡ 에너지 절감 효과란?</strong><br/>
+                      업사이클링 과정에서 신규 원자재 생산 대비 절감되는 전력량(kWh)을 측정합니다.
+                      재활용을 통해 제조업 에너지 소비를 줄이는 환경(E) 성과 지표입니다.
+                      <br/><br/>
+                      <strong>환산 기준:</strong> 원자재별 생산 에너지 차이 × 수거량
+                    </div>
+                  )}
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>
                   월 절감량
                 </div>
-                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#10B981' }}>
-                  {tier2KPI.energySaving.monthly.toLocaleString()} kWh
+                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#374151' }}>
+                  {quarterlyTier2KPI.energySaving.monthly.toLocaleString()} kWh
                 </div>
-                <div className={`badge badge-${tier2KPI.energySaving.grade === '우수' ? 'success' : 'info'}`} style={{ marginTop: '0.5rem' }}>
-                  {tier2KPI.energySaving.grade}
+                <div className={`badge badge-${quarterlyTier2KPI.energySaving.grade === '우수' ? 'success' : 'info'}`} style={{ marginTop: '0.5rem' }}>
+                  {quarterlyTier2KPI.energySaving.grade}
                 </div>
               </div>
             </div>
@@ -460,44 +1210,80 @@ function CompanyDetail({ fixedCompanyId }) {
               gap: '1rem',
               marginBottom: '1rem'
             }}>
-              <div style={{ padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem' }}>
+              <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem' }}>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>PET 병</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#10B981' }}>
-                  {tier2KPI.energySaving.breakdown.pet.toLocaleString()} kWh
+                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#374151' }}>
+                  {quarterlyTier2KPI.energySaving.breakdown.pet.toLocaleString()} kWh
                 </div>
               </div>
-              <div style={{ padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem' }}>
+              <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem' }}>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>HDPE 용기</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#10B981' }}>
-                  {tier2KPI.energySaving.breakdown.hdpe.toLocaleString()} kWh
+                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#374151' }}>
+                  {quarterlyTier2KPI.energySaving.breakdown.hdpe.toLocaleString()} kWh
                 </div>
               </div>
-              <div style={{ padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem' }}>
+              <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem' }}>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>혼합 플라스틱</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#10B981' }}>
-                  {tier2KPI.energySaving.breakdown.mixedPlastic.toLocaleString()} kWh
+                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#374151' }}>
+                  {quarterlyTier2KPI.energySaving.breakdown.mixedPlastic.toLocaleString()} kWh
                 </div>
               </div>
             </div>
 
-            <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', fontSize: '0.875rem' }}>
-              <strong>목표:</strong> 월 {tier2KPI.energySaving.target.toLocaleString()} kWh 이상 |
-              <strong style={{ marginLeft: '1rem' }}>Tier 3 기여도:</strong> E 점수의 20%
-            </div>
           </div>
 
-          {/* KPI #5: 협력 네트워크 확장도 */}
           <div className="card" style={{ marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <div style={{ fontSize: '2.5rem' }}>🤝</div>
                 <div>
-                  <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
-                    KPI #5. 협력 네트워크 확장도 (S)
-                  </h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
+                      협력 네트워크 확장도 (S)
+                    </h3>
+                    <button
+                      onClick={() => toggleTooltip('tier2-network')}
+                      style={{
+                        background: '#10B981',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '24px',
+                        height: '24px',
+                        cursor: 'pointer',
+                        fontSize: '0.875rem',
+                        fontWeight: '700',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                      }}
+                      title="자세히 보기"
+                    >
+                      ?
+                    </button>
+                  </div>
                   <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
                     최근 3개월 내 활동 협력 기관 수
                   </div>
+                  {activeTooltip === 'tier2-network' && (
+                    <div style={{
+                      marginTop: '1rem',
+                      padding: '1rem',
+                      backgroundColor: '#F0FDF4',
+                      borderRadius: '0.5rem',
+                      borderLeft: '4px solid #10B981',
+                      fontSize: '0.875rem',
+                      lineHeight: '1.6',
+                      color: '#065F46'
+                    }}>
+                      <strong>🤝 협력 네트워크 확장도란?</strong><br/>
+                      사회적기업, 복지기관, 교육기관 등과의 협력 규모를 측정합니다.
+                      지역사회와의 연계 강화를 나타내는 사회(S) 성과 지표입니다.
+                      <br/><br/>
+                      <strong>평가 기준:</strong> 최근 3개월 내 실제 활동한 협력 기관 수
+                    </div>
+                  )}
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
@@ -505,10 +1291,10 @@ function CompanyDetail({ fixedCompanyId }) {
                   활동 협력기관
                 </div>
                 <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#3B82F6' }}>
-                  {tier2KPI.partnerNetwork.activePartners}개
+                  {quarterlyTier2KPI.partnerNetwork.activePartners}개
                 </div>
-                <div className={`badge badge-${tier2KPI.partnerNetwork.grade === '우수' ? 'success' : 'info'}`} style={{ marginTop: '0.5rem' }}>
-                  {tier2KPI.partnerNetwork.grade}
+                <div className={`badge badge-${quarterlyTier2KPI.partnerNetwork.grade === '우수' ? 'success' : 'info'}`} style={{ marginTop: '0.5rem' }}>
+                  {quarterlyTier2KPI.partnerNetwork.grade}
                 </div>
               </div>
             </div>
@@ -519,61 +1305,97 @@ function CompanyDetail({ fixedCompanyId }) {
               gap: '1rem',
               marginBottom: '1rem'
             }}>
-              <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem', textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#3B82F6' }}>
-                  {tier2KPI.partnerNetwork.breakdown.corporate}
+              <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#374151' }}>
+                  {quarterlyTier2KPI.partnerNetwork.breakdown.corporate}
                 </div>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>민간 기업</div>
               </div>
-              <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem', textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#3B82F6' }}>
-                  {tier2KPI.partnerNetwork.breakdown.public}
+              <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#374151' }}>
+                  {quarterlyTier2KPI.partnerNetwork.breakdown.public}
                 </div>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>공공기관</div>
               </div>
-              <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem', textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#3B82F6' }}>
-                  {tier2KPI.partnerNetwork.breakdown.education}
+              <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#374151' }}>
+                  {quarterlyTier2KPI.partnerNetwork.breakdown.education}
                 </div>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>교육기관</div>
               </div>
-              <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem', textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#3B82F6' }}>
-                  {tier2KPI.partnerNetwork.breakdown.npo}
+              <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#374151' }}>
+                  {quarterlyTier2KPI.partnerNetwork.breakdown.npo}
                 </div>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>비영리단체</div>
               </div>
             </div>
 
-            <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', fontSize: '0.875rem' }}>
-              <strong>목표:</strong> {tier2KPI.partnerNetwork.target}개 이상 |
-              <strong style={{ marginLeft: '1rem' }}>Tier 3 기여도:</strong> S 점수의 50%
-            </div>
           </div>
 
-          {/* KPI #6: 자원 가치 보존액 */}
           <div className="card" style={{ marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <div style={{ fontSize: '2.5rem' }}>💰</div>
                 <div>
-                  <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
-                    KPI #6. 자원 가치 보존액 (G)
-                  </h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
+                      자원 가치 보존액 (G)
+                    </h3>
+                    <button
+                      onClick={() => toggleTooltip('tier2-value')}
+                      style={{
+                        background: '#10B981',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '24px',
+                        height: '24px',
+                        cursor: 'pointer',
+                        fontSize: '0.875rem',
+                        fontWeight: '700',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                      }}
+                      title="자세히 보기"
+                    >
+                      ?
+                    </button>
+                  </div>
                   <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
                     순환 자원으로 전환된 경제적 가치
                   </div>
+                  {activeTooltip === 'tier2-value' && (
+                    <div style={{
+                      marginTop: '1rem',
+                      padding: '1rem',
+                      backgroundColor: '#F0FDF4',
+                      borderRadius: '0.5rem',
+                      borderLeft: '4px solid #10B981',
+                      fontSize: '0.875rem',
+                      lineHeight: '1.6',
+                      color: '#065F46'
+                    }}>
+                      <strong>💰 자원 가치 보존액이란?</strong><br/>
+                      폐기되었을 자원을 재활용/업사이클링하여 보존한 경제적 가치를 화폐로 환산한 지표입니다.
+                      순환경제 기여도를 나타내는 지배구조(G) 성과입니다.
+                      <br/><br/>
+                      <strong>계산 방식:</strong> 재자원화 제품 판매가 + 원자재 대체 가치
+                    </div>
+                  )}
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>
                   월 보존액
                 </div>
-                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#F59E0B' }}>
-                  {(tier2KPI.resourceValue.monthlyValue / 10000).toLocaleString()}만원
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#6B7280' }}>
+                  {(quarterlyTier2KPI.resourceValue.monthlyValue / 10000).toLocaleString()}만원
                 </div>
-                <div className={`badge badge-${tier2KPI.resourceValue.grade === '우수' ? 'success' : 'warning'}`} style={{ marginTop: '0.5rem' }}>
-                  {tier2KPI.resourceValue.grade}
+                <div className={`badge badge-${quarterlyTier2KPI.resourceValue.grade === '우수' ? 'success' : 'warning'}`} style={{ marginTop: '0.5rem' }}>
+                  {quarterlyTier2KPI.resourceValue.grade}
                 </div>
               </div>
             </div>
@@ -584,38 +1406,74 @@ function CompanyDetail({ fixedCompanyId }) {
               gap: '1rem',
               marginBottom: '1rem'
             }}>
-              <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
+              <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem' }}>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>플라스틱 재자원화</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#F59E0B' }}>
-                  {(tier2KPI.resourceValue.breakdown.plastic / 10000).toLocaleString()}만원
+                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#374151' }}>
+                  {(quarterlyTier2KPI.resourceValue.breakdown.plastic / 10000).toLocaleString()}만원
                 </div>
               </div>
-              <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
+              <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem' }}>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>장난감 재사용</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#F59E0B' }}>
-                  {(tier2KPI.resourceValue.breakdown.toys / 10000).toLocaleString()}만원
+                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#374151' }}>
+                  {(quarterlyTier2KPI.resourceValue.breakdown.toys / 10000).toLocaleString()}만원
                 </div>
               </div>
             </div>
 
-            <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', fontSize: '0.875rem' }}>
-              <strong>목표:</strong> 월 {(tier2KPI.resourceValue.target / 10000).toLocaleString()}만원 이상 |
-              <strong style={{ marginLeft: '1rem' }}>Tier 3 기여도:</strong> G 점수의 60%
-            </div>
           </div>
 
-          {/* KPI #7: 교육 도달 범위 */}
           <div className="card" style={{ marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <div style={{ fontSize: '2.5rem' }}>📚</div>
                 <div>
-                  <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
-                    KPI #7. 교육 도달 범위 (S)
-                  </h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
+                      교육 도달 범위 (S)
+                    </h3>
+                    <button
+                      onClick={() => toggleTooltip('tier2-education')}
+                      style={{
+                        background: '#10B981',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '24px',
+                        height: '24px',
+                        cursor: 'pointer',
+                        fontSize: '0.875rem',
+                        fontWeight: '700',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                      }}
+                      title="자세히 보기"
+                    >
+                      ?
+                    </button>
+                  </div>
                   <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
                     교육 프로그램 참여 인원 가중 점수
                   </div>
+                  {activeTooltip === 'tier2-education' && (
+                    <div style={{
+                      marginTop: '1rem',
+                      padding: '1rem',
+                      backgroundColor: '#F0FDF4',
+                      borderRadius: '0.5rem',
+                      borderLeft: '4px solid #10B981',
+                      fontSize: '0.875rem',
+                      lineHeight: '1.6',
+                      color: '#065F46'
+                    }}>
+                      <strong>📚 교육 도달 범위란?</strong><br/>
+                      ESG 교육 프로그램의 참여 인원을 대상별 중요도로 가중하여 계산한 지표입니다.
+                      지역사회 확산 노력을 나타내는 사회(S) 성과입니다.
+                      <br/><br/>
+                      <strong>가중치:</strong> 임직원(×1.0), 협력사(×1.5), 지역사회(×2.0)
+                    </div>
+                  )}
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
@@ -623,10 +1481,10 @@ function CompanyDetail({ fixedCompanyId }) {
                   가중 점수
                 </div>
                 <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#3B82F6' }}>
-                  {tier2KPI.educationReach.totalScore}점
+                  {quarterlyTier2KPI.educationReach.totalScore}점
                 </div>
-                <div className={`badge badge-${tier2KPI.educationReach.grade === '우수' ? 'success' : 'info'}`} style={{ marginTop: '0.5rem' }}>
-                  {tier2KPI.educationReach.grade}
+                <div className={`badge badge-${quarterlyTier2KPI.educationReach.grade === '우수' ? 'success' : 'info'}`} style={{ marginTop: '0.5rem' }}>
+                  {quarterlyTier2KPI.educationReach.grade}
                 </div>
               </div>
             </div>
@@ -640,55 +1498,91 @@ function CompanyDetail({ fixedCompanyId }) {
               <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>임직원</div>
                 <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#3B82F6' }}>
-                  {tier2KPI.educationReach.breakdown.employees}명
+                  {quarterlyTier2KPI.educationReach.breakdown.employees}명
                 </div>
                 <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>× 1.0배</div>
               </div>
               <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>협력사</div>
                 <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#3B82F6' }}>
-                  {tier2KPI.educationReach.breakdown.partners}명
+                  {quarterlyTier2KPI.educationReach.breakdown.partners}명
                 </div>
                 <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>× 1.5배</div>
               </div>
               <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>지역사회</div>
                 <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#3B82F6' }}>
-                  {tier2KPI.educationReach.breakdown.community}명
+                  {quarterlyTier2KPI.educationReach.breakdown.community}명
                 </div>
                 <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>× 2.0배</div>
               </div>
             </div>
 
-            <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', fontSize: '0.875rem' }}>
-              <strong>목표:</strong> {tier2KPI.educationReach.target}점 이상 |
-              <strong style={{ marginLeft: '1rem' }}>Tier 3 기여도:</strong> S 점수의 50%
-            </div>
           </div>
 
-          {/* KPI #8: 업사이클링 부가가치율 */}
           <div className="card" style={{ marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <div style={{ fontSize: '2.5rem' }}>🔄</div>
                 <div>
-                  <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
-                    KPI #8. 업사이클링 부가가치율 (G)
-                  </h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
+                      업사이클링 부가가치율 (G)
+                    </h3>
+                    <button
+                      onClick={() => toggleTooltip('tier2-upcycling')}
+                      style={{
+                        background: '#10B981',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '24px',
+                        height: '24px',
+                        cursor: 'pointer',
+                        fontSize: '0.875rem',
+                        fontWeight: '700',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                      }}
+                      title="자세히 보기"
+                    >
+                      ?
+                    </button>
+                  </div>
                   <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
                     원재료 대비 최종 제품 가치 상승률
                   </div>
+                  {activeTooltip === 'tier2-upcycling' && (
+                    <div style={{
+                      marginTop: '1rem',
+                      padding: '1rem',
+                      backgroundColor: '#F0FDF4',
+                      borderRadius: '0.5rem',
+                      borderLeft: '4px solid #10B981',
+                      fontSize: '0.875rem',
+                      lineHeight: '1.6',
+                      color: '#065F46'
+                    }}>
+                      <strong>🔄 업사이클링 부가가치율이란?</strong><br/>
+                      폐자원(원재료)을 업사이클링하여 만든 최종 제품의 가치 상승률을 나타냅니다.
+                      단순 재활용을 넘어 혁신적 가치 창출을 평가하는 지배구조(G) 지표입니다.
+                      <br/><br/>
+                      <strong>계산 방식:</strong> (최종 제품 가치 - 원재료 가치) / 원재료 가치 × 100
+                    </div>
+                  )}
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>
                   부가가치율
                 </div>
-                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#F59E0B' }}>
-                  {tier2KPI.upcyclingValue.valueAddedRate}%
+                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#6B7280' }}>
+                  {quarterlyTier2KPI.upcyclingValue.valueAddedRate}%
                 </div>
-                <div className={`badge badge-${tier2KPI.upcyclingValue.grade === '우수' ? 'success' : 'warning'}`} style={{ marginTop: '0.5rem' }}>
-                  {tier2KPI.upcyclingValue.grade}
+                <div className={`badge badge-${quarterlyTier2KPI.upcyclingValue.grade === '우수' ? 'success' : 'warning'}`} style={{ marginTop: '0.5rem' }}>
+                  {quarterlyTier2KPI.upcyclingValue.grade}
                 </div>
               </div>
             </div>
@@ -699,186 +1593,28 @@ function CompanyDetail({ fixedCompanyId }) {
               gap: '1rem',
               marginBottom: '1rem'
             }}>
-              <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
+              <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem' }}>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>원재료 가치</div>
                 <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#6B7280' }}>
-                  {(tier2KPI.upcyclingValue.breakdown.rawMaterialValue / 10000).toLocaleString()}만원
+                  {(quarterlyTier2KPI.upcyclingValue.breakdown.rawMaterialValue / 10000).toLocaleString()}만원
                 </div>
               </div>
-              <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
+              <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem' }}>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>최종 제품 가치</div>
-                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#F59E0B' }}>
+                <div style={{ fontSize: '1.5rem', fontWeight: '600', color: '#6B7280' }}>
                   {(tier2KPI.upcyclingValue.breakdown.finalProductValue / 10000).toLocaleString()}만원
                 </div>
               </div>
             </div>
 
-            <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', fontSize: '0.875rem' }}>
-              <strong>목표:</strong> {tier2KPI.upcyclingValue.target}% 이상 |
-              <strong style={{ marginLeft: '1rem' }}>Tier 3 기여도:</strong> G 점수의 40%
-            </div>
           </div>
-        </div>
-      )}
-
-      {/* Tier 3 통합 KPI */}
-      {tier3KPI && (
-        <div className="section">
-          <h2 className="section-title">🏆 Tier 3 통합 KPI - ESG 임팩트 스코어</h2>
-          <p className="section-subtitle">
-            연간 평가 지표로 대외 공시 및 투자 유치에 활용됩니다. E(50%) + S(30%) + G(20%) 가중 평균
-          </p>
-
-          <div className="card" style={{ marginBottom: '2rem' }}>
-            {/* 총점 및 등급 */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '2rem',
-              background: tier3KPI.grade === 'S' ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' :
-                          tier3KPI.grade === 'A' ? 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)' :
-                          'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
-              borderRadius: '1rem',
-              color: 'white',
-              marginBottom: '2rem'
-            }}>
-              <div>
-                <div style={{ fontSize: '1rem', opacity: 0.9, marginBottom: '0.5rem' }}>ESG 임팩트 스코어</div>
-                <div style={{ fontSize: '4rem', fontWeight: '700' }}>{tier3KPI.totalScore}점</div>
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{
-                  display: 'inline-block',
-                  padding: '1rem 2rem',
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  borderRadius: '1rem',
-                  backdropFilter: 'blur(10px)'
-                }}>
-                  <div style={{ fontSize: '3rem', fontWeight: '700' }}>{tier3KPI.grade}</div>
-                  <div style={{ fontSize: '1rem', opacity: 0.9 }}>{tier3KPI.gradeDescription}</div>
-                </div>
-              </div>
-            </div>
-
-            {/* E, S, G 상세 점수 */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '1.5rem'
-            }}>
-              {/* E 점수 */}
-              <div style={{
-                padding: '1.5rem',
-                backgroundColor: '#F0FDF4',
-                borderRadius: '1rem',
-                borderLeft: '4px solid #10B981'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                  <h3 style={{ fontSize: '1.5rem', color: '#10B981' }}>🌍 E (환경)</h3>
-                  <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#10B981' }}>
-                    {tier3KPI.eScore}점
-                  </div>
-                </div>
-                <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '1rem' }}>
-                  가중치: 50% | 목표: 85점 이상
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.5rem' }}>
-                    <span>탄소 저감 (50%)</span>
-                    <strong style={{ color: '#10B981' }}>{tier3KPI.eBreakdown.carbonReduction}점</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.5rem' }}>
-                    <span>에너지 절감 (20%)</span>
-                    <strong style={{ color: '#10B981' }}>{tier3KPI.eBreakdown.energySaving}점</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.5rem' }}>
-                    <span>순환성 (30%)</span>
-                    <strong style={{ color: '#10B981' }}>{tier3KPI.eBreakdown.circularity}점</strong>
-                  </div>
-                </div>
-              </div>
-
-              {/* S 점수 */}
-              <div style={{
-                padding: '1.5rem',
-                backgroundColor: '#EFF6FF',
-                borderRadius: '1rem',
-                borderLeft: '4px solid #3B82F6'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                  <h3 style={{ fontSize: '1.5rem', color: '#3B82F6' }}>🤝 S (사회)</h3>
-                  <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#3B82F6' }}>
-                    {tier3KPI.sScore}점
-                  </div>
-                </div>
-                <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '1rem' }}>
-                  가중치: 30% | 목표: 80점 이상
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.5rem' }}>
-                    <span>교육 참여 (50%)</span>
-                    <strong style={{ color: '#3B82F6' }}>{tier3KPI.sBreakdown.education}점</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.5rem' }}>
-                    <span>협력 기관 (50%)</span>
-                    <strong style={{ color: '#3B82F6' }}>{tier3KPI.sBreakdown.partnership}점</strong>
-                  </div>
-                </div>
-              </div>
-
-              {/* G 점수 */}
-              <div style={{
-                padding: '1.5rem',
-                backgroundColor: '#FEF3C7',
-                borderRadius: '1rem',
-                borderLeft: '4px solid #F59E0B'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                  <h3 style={{ fontSize: '1.5rem', color: '#F59E0B' }}>💼 G (경제)</h3>
-                  <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#F59E0B' }}>
-                    {tier3KPI.gScore}점
-                  </div>
-                </div>
-                <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '1rem' }}>
-                  가중치: 20% | 목표: 75점 이상
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.5rem' }}>
-                    <span>자원 가치 (60%)</span>
-                    <strong style={{ color: '#F59E0B' }}>{tier3KPI.gBreakdown.resourceValue}점</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.5rem' }}>
-                    <span>부가가치율 (40%)</span>
-                    <strong style={{ color: '#F59E0B' }}>{tier3KPI.gBreakdown.upcyclingValue}점</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 점수 계산식 */}
-            <div style={{
-              marginTop: '2rem',
-              padding: '1.5rem',
-              backgroundColor: '#F9FAFB',
-              borderRadius: '0.5rem',
-              fontSize: '0.875rem',
-              lineHeight: '1.8'
-            }}>
-              <strong>📐 ESG 임팩트 스코어 계산식:</strong>
-              <div style={{ marginTop: '0.5rem', fontFamily: 'monospace', color: '#374151' }}>
-                총점 = (E점수 × 0.5) + (S점수 × 0.3) + (G점수 × 0.2)
-              </div>
-              <div style={{ marginTop: '0.5rem', fontFamily: 'monospace', color: '#374151' }}>
-                = ({tier3KPI.eScore} × 0.5) + ({tier3KPI.sScore} × 0.3) + ({tier3KPI.gScore} × 0.2) = {tier3KPI.totalScore}점
-              </div>
-              <div style={{ marginTop: '1rem', color: '#6B7280' }}>
-                <strong>등급 기준:</strong> S (80-100점) | A (60-80점) | B (40-60점) | C (20-40점) | D (0-20점)
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+            )}
+          </>
+        )}
+          </>
+        )}
+      </div>
 
       {/* 참여 캠페인 내역 */}
       <div className="section">
@@ -977,57 +1713,6 @@ function CompanyDetail({ fixedCompanyId }) {
         </div>
       </div>
 
-      {/* ESG 점수 */}
-      <div className="section">
-        <h2 className="section-title">🎯 ESG 종합 평가</h2>
-        <div className="card-grid">
-          <div className="card">
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#10B981' }}>
-              [E] 환경
-            </h3>
-            <div className="progress-bar-container">
-              <div className="progress-bar" style={{ width: `${esgScores.environmental}%` }}>
-                {esgScores.environmental}%
-              </div>
-            </div>
-            <div style={{ marginTop: '1rem', color: '#6B7280' }}>
-              <div>✓ 폐기물 감축 및 재활용</div>
-              <div>✓ 탄소 저감 기여</div>
-            </div>
-          </div>
-
-          <div className="card">
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#3B82F6' }}>
-              [S] 사회
-            </h3>
-            <div className="progress-bar-container">
-              <div className="progress-bar" style={{ width: `${esgScores.social}%` }}>
-                {esgScores.social}%
-              </div>
-            </div>
-            <div style={{ marginTop: '1rem', color: '#6B7280' }}>
-              <div>✓ 사회공헌 활동</div>
-              <div>✓ 지역사회 관계</div>
-            </div>
-          </div>
-
-          <div className="card">
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#F59E0B' }}>
-              [G] 지배구조
-            </h3>
-            <div className="progress-bar-container">
-              <div className="progress-bar" style={{ width: `${esgScores.governance}%` }}>
-                {esgScores.governance}%
-              </div>
-            </div>
-            <div style={{ marginTop: '1rem', color: '#6B7280' }}>
-              <div>✓ 투명한 파트너십</div>
-              <div>✓ 윤리경영</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* 관련 언론 보도 */}
       {media && media.length > 0 && (
         <div className="section">
@@ -1063,9 +1748,27 @@ function CompanyDetail({ fixedCompanyId }) {
             {info.name}의 성과 데이터를 다양한 형식으로 다운로드하여 활용하세요
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-            <button className="btn btn-primary">📊 Excel 다운로드</button>
-            <button className="btn btn-secondary">📄 PDF 리포트</button>
-            <button className="btn btn-outline">📧 이메일 발송</button>
+            <button
+              className="btn btn-primary"
+              onClick={handleExcelExport}
+              disabled={isExporting}
+            >
+              {isExporting ? '⏳ 처리중...' : '📊 Excel 다운로드'}
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={handlePDFExport}
+              disabled={isExporting}
+            >
+              {isExporting ? '⏳ 처리중...' : '📄 PDF 리포트'}
+            </button>
+            <button
+              className="btn btn-outline"
+              onClick={handlePNGExport}
+              disabled={isExporting}
+            >
+              {isExporting ? '⏳ 처리중...' : '🖼️ PNG 저장'}
+            </button>
           </div>
         </div>
       </div>

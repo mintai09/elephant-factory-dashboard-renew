@@ -11,10 +11,99 @@ import {
   companiesTier2KPI,
   companiesTier3KPI
 } from '../data/companiesData';
+import { exportDashboardToPDF, exportToPNG } from '../utils/exportUtils';
+import * as XLSX from 'xlsx';
 
 function Dashboard() {
   const [sortBy, setSortBy] = useState('co2');
+  const [isExporting, setIsExporting] = useState(false);
   const companies = getAllCompaniesSummary();
+
+  // Export 핸들러
+  const handleDashboardPDFExport = async () => {
+    setIsExporting(true);
+    const result = await exportDashboardToPDF(companies, totalData);
+    setIsExporting(false);
+    if (result.success) {
+      alert(result.message);
+    } else {
+      alert(result.message);
+    }
+  };
+
+  const handleDashboardExcelExport = () => {
+    setIsExporting(true);
+    try {
+      const wb = XLSX.utils.book_new();
+
+      // 전체 기업 성과 시트
+      const summarySheet = [
+        ['코끼리공장 ESG 임팩트 대시보드'],
+        [`생성일: ${new Date().toLocaleDateString('ko-KR')}`],
+        [],
+        ['전체 통합 성과'],
+        ['지표', '값'],
+        ['참여 기업', `${companies.length}개`],
+        ['총 참여 인원', `${totalData.participants}명`],
+        ['총 수거량', `${totalData.collection}kg`],
+        ['총 CO₂ 저감', `${totalData.co2.toFixed(1)}톤`],
+        ['플라스틱', `${totalData.plasticTotal}kg`],
+        ['장난감', `${totalData.toysTotal}kg`]
+      ];
+
+      const ws1 = XLSX.utils.aoa_to_sheet(summarySheet);
+      ws1['!cols'] = [{ wch: 20 }, { wch: 20 }];
+      XLSX.utils.book_append_sheet(wb, ws1, '전체 성과');
+
+      // 기업별 성과 시트
+      const companySheet = [
+        ['기업별 성과 순위'],
+        [],
+        ['순위', '기업명', '산업', '폐플라스틱(kg)', '장난감(kg)', '총수거량(kg)', 'CO₂(tonnes)', '참여인원', 'ESG점수']
+      ];
+
+      sortedCompanies.forEach((company, index) => {
+        companySheet.push([
+          index + 1,
+          company.name,
+          company.industry,
+          company.performance.wasteBreakdown.plastic,
+          company.performance.wasteBreakdown.toys,
+          company.performance.collectionAmount,
+          company.performance.co2Reduction.toFixed(2),
+          company.performance.participants,
+          company.esgScore
+        ]);
+      });
+
+      const ws2 = XLSX.utils.aoa_to_sheet(companySheet);
+      ws2['!cols'] = [
+        { wch: 8 }, { wch: 20 }, { wch: 15 }, { wch: 15 },
+        { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 12 }, { wch: 12 }
+      ];
+      XLSX.utils.book_append_sheet(wb, ws2, '기업별 성과');
+
+      XLSX.writeFile(wb, `ESG_Dashboard_${new Date().toISOString().split('T')[0]}.xlsx`);
+
+      setIsExporting(false);
+      alert('Excel 파일이 다운로드되었습니다.');
+    } catch (error) {
+      setIsExporting(false);
+      alert('Excel 생성 중 오류가 발생했습니다.');
+      console.error(error);
+    }
+  };
+
+  const handleDashboardPNGExport = async () => {
+    setIsExporting(true);
+    const result = await exportToPNG('root', 'ESG_Dashboard');
+    setIsExporting(false);
+    if (result.success) {
+      alert(result.message);
+    } else {
+      alert(result.message);
+    }
+  };
 
   // 전체 통합 데이터 계산
   const totalData = {
@@ -70,71 +159,104 @@ function Dashboard() {
   }));
 
   return (
-    <div className="main-content">
+    <div>
+      {/* Header with background image */}
+      <div style={{
+        position: 'relative',
+        backgroundImage: 'url(./Dashboard_head.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '400px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: '0'
+      }}>
+        {/* Dark overlay */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 1
+        }}></div>
+        {/* Content */}
+        <div style={{ position: 'relative', zIndex: 2, color: 'white', textAlign: 'center', padding: '3rem 2rem' }}>
+          <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', fontWeight: '700' }}>
+            📊 ESG 임팩트 대시보드
+          </h1>
+          <p style={{ fontSize: '1.125rem', maxWidth: '800px', margin: '0 auto', lineHeight: '1.8' }}>
+            전체 기업의 ESG 성과를 실시간으로 시각화하고, 폐기물 유형별 기여도를 분석합니다
+          </p>
+        </div>
+      </div>
+
+      <div className="main-content">
       <div className="section">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
-          <div>
-            <h1 className="section-title">📊 ESG 임팩트 대시보드</h1>
-            <p className="section-subtitle">
-              전체 기업의 ESG 성과를 실시간으로 시각화하고, 폐기물 유형별 기여도를 분석합니다
-            </p>
-          </div>
+          <div></div>
 
-          {/* 데이터 내보내기 버튼 (UI 데모) */}
+          {/* 데이터 내보내기 버튼 */}
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             <button
-              onClick={() => alert('PDF 보고서 다운로드 기능 (데모)\n\n실제 구현 시:\n- 전체 대시보드 내용을 PDF로 변환\n- 기업 로고 및 브랜딩 포함\n- 자동 생성된 분석 코멘트 추가')}
+              onClick={handleDashboardPDFExport}
+              disabled={isExporting}
               style={{
                 padding: '0.75rem 1.5rem',
-                backgroundColor: '#EF4444',
+                backgroundColor: isExporting ? '#9CA3AF' : '#EF4444',
                 color: 'white',
                 border: 'none',
                 borderRadius: '0.5rem',
                 fontSize: '0.875rem',
                 fontWeight: '600',
-                cursor: 'pointer',
+                cursor: isExporting ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem'
               }}
             >
-              📄 PDF 다운로드
+              {isExporting ? '⏳ 처리중...' : '📄 PDF 다운로드'}
             </button>
             <button
-              onClick={() => alert('Excel 데이터 내보내기 (데모)\n\n실제 구현 시:\n- 모든 수치 데이터를 Excel 형식으로 변환\n- 차트 및 그래프 포함\n- 피벗 테이블 분석용 시트 자동 생성')}
+              onClick={handleDashboardExcelExport}
+              disabled={isExporting}
               style={{
                 padding: '0.75rem 1.5rem',
-                backgroundColor: '#10B981',
+                backgroundColor: isExporting ? '#9CA3AF' : '#10B981',
                 color: 'white',
                 border: 'none',
                 borderRadius: '0.5rem',
                 fontSize: '0.875rem',
                 fontWeight: '600',
-                cursor: 'pointer',
+                cursor: isExporting ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem'
               }}
             >
-              📊 Excel 내보내기
+              {isExporting ? '⏳ 처리중...' : '📊 Excel 내보내기'}
             </button>
             <button
-              onClick={() => alert('이미지로 저장 (데모)\n\n실제 구현 시:\n- 대시보드 전체 또는 선택 영역을 PNG 이미지로 저장\n- 프레젠테이션 및 보고서 삽입용')}
+              onClick={handleDashboardPNGExport}
+              disabled={isExporting}
               style={{
                 padding: '0.75rem 1.5rem',
-                backgroundColor: '#3B82F6',
+                backgroundColor: isExporting ? '#9CA3AF' : '#3B82F6',
                 color: 'white',
                 border: 'none',
                 borderRadius: '0.5rem',
                 fontSize: '0.875rem',
                 fontWeight: '600',
-                cursor: 'pointer',
+                cursor: isExporting ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem'
               }}
             >
-              🖼️ PNG 저장
+              {isExporting ? '⏳ 처리중...' : '🖼️ PNG 저장'}
             </button>
           </div>
         </div>
@@ -550,7 +672,7 @@ function Dashboard() {
             }}>
               <div>
                 <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🌲</div>
-                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#10B981' }}>
+                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#374151' }}>
                   {Math.round(totalData.co2 * 1000 / 22).toLocaleString()}그루
                 </div>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280', marginTop: '0.5rem' }}>
@@ -559,7 +681,7 @@ function Dashboard() {
               </div>
               <div>
                 <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🚗</div>
-                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#10B981' }}>
+                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#374151' }}>
                   {(totalData.co2 / 4.6).toFixed(1)}대
                 </div>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280', marginTop: '0.5rem' }}>
@@ -568,7 +690,7 @@ function Dashboard() {
               </div>
               <div>
                 <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🧊</div>
-                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#10B981' }}>
+                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#374151' }}>
                   {Math.round(totalData.co2 * 1000 * 0.00744).toLocaleString()}m²
                 </div>
                 <div style={{ fontSize: '0.875rem', color: '#6B7280', marginTop: '0.5rem' }}>
@@ -600,46 +722,41 @@ function Dashboard() {
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                    {/* KPI #4: 에너지 절감 */}
-                    <div style={{ padding: '0.75rem', backgroundColor: '#F0FDF4', borderRadius: '0.375rem' }}>
-                      <div style={{ fontSize: '0.75rem', color: '#065F46', marginBottom: '0.25rem' }}>⚡ 에너지 절감 (E)</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#10B981' }}>
+                    <div style={{ padding: '0.75rem', backgroundColor: '#F9FAFB', borderRadius: '0.375rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>⚡ 에너지 절감 (E)</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#374151' }}>
                         {tier2.energySaving.monthly.toLocaleString()} kWh
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>등급: {tier2.energySaving.grade}</div>
                     </div>
 
-                    {/* KPI #5: 협력 네트워크 */}
-                    <div style={{ padding: '0.75rem', backgroundColor: '#EFF6FF', borderRadius: '0.375rem' }}>
-                      <div style={{ fontSize: '0.75rem', color: '#1E40AF', marginBottom: '0.25rem' }}>🤝 협력 네트워크 (S)</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#3B82F6' }}>
+                    <div style={{ padding: '0.75rem', backgroundColor: '#F9FAFB', borderRadius: '0.375rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>🤝 협력 네트워크 (S)</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#374151' }}>
                         {tier2.partnerNetwork.activePartners}개 기관
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>등급: {tier2.partnerNetwork.grade}</div>
                     </div>
 
-                    {/* KPI #6: 자원 가치 */}
-                    <div style={{ padding: '0.75rem', backgroundColor: '#FEF3C7', borderRadius: '0.375rem' }}>
-                      <div style={{ fontSize: '0.75rem', color: '#78350F', marginBottom: '0.25rem' }}>💰 자원 가치 (G)</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#F59E0B' }}>
+                    <div style={{ padding: '0.75rem', backgroundColor: '#F9FAFB', borderRadius: '0.375rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>💰 자원 가치 (G)</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#374151' }}>
                         {tier2.resourceValue.monthlyValue.toLocaleString()}원
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>등급: {tier2.resourceValue.grade}</div>
                     </div>
 
-                    {/* KPI #7: 교육 도달 */}
-                    <div style={{ padding: '0.75rem', backgroundColor: '#EFF6FF', borderRadius: '0.375rem' }}>
-                      <div style={{ fontSize: '0.75rem', color: '#1E40AF', marginBottom: '0.25rem' }}>📚 교육 도달 (S)</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#3B82F6' }}>
+                    <div style={{ padding: '0.75rem', backgroundColor: '#F9FAFB', borderRadius: '0.375rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>📚 교육 도달 (S)</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#374151' }}>
                         {tier2.educationReach.totalScore.toLocaleString()}점
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>등급: {tier2.educationReach.grade}</div>
                     </div>
 
-                    {/* KPI #8: 업사이클링 부가가치 */}
-                    <div style={{ padding: '0.75rem', backgroundColor: '#FEF3C7', borderRadius: '0.375rem' }}>
-                      <div style={{ fontSize: '0.75rem', color: '#78350F', marginBottom: '0.25rem' }}>📈 부가가치율 (G)</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#F59E0B' }}>
+                    <div style={{ padding: '0.75rem', backgroundColor: '#F9FAFB', borderRadius: '0.375rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>📈 부가가치율 (G)</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: '600', color: '#374151' }}>
                         {tier2.upcyclingValue.valueAddedRate}%
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>등급: {tier2.upcyclingValue.grade}</div>
@@ -754,12 +871,31 @@ function Dashboard() {
               다양한 형식으로 보고서를 다운로드하여 내부 보고 및 공시에 활용하세요
             </p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-              <button className="btn btn-primary">📊 Excel 다운로드</button>
-              <button className="btn btn-secondary">📄 PDF 리포트</button>
-              <button className="btn btn-outline">🖼 이미지 저장</button>
+              <button
+                className="btn btn-primary"
+                onClick={handleDashboardExcelExport}
+                disabled={isExporting}
+              >
+                {isExporting ? '⏳ 처리중...' : '📊 Excel 다운로드'}
+              </button>
+              <button
+                className="btn btn-secondary"
+                onClick={handleDashboardPDFExport}
+                disabled={isExporting}
+              >
+                {isExporting ? '⏳ 처리중...' : '📄 PDF 리포트'}
+              </button>
+              <button
+                className="btn btn-outline"
+                onClick={handleDashboardPNGExport}
+                disabled={isExporting}
+              >
+                {isExporting ? '⏳ 처리중...' : '🖼 이미지 저장'}
+              </button>
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

@@ -9,19 +9,50 @@ function KogongjangOverview() {
   return (
     <div>
       {/* 히어로 섹션 */}
-      <section className="hero-section">
-        <h1 className="hero-title">
-          🐘 코끼리공장이 하는 일
-        </h1>
-        <p className="hero-subtitle">
-          버려지는 장난감을 다시 사회의 자원으로 순환시킵니다
-        </p>
-        <p style={{ fontSize: '1.125rem', opacity: 0.95, marginTop: '1.5rem', lineHeight: '1.8' }}>
-          코끼리공장은 더 이상 사용되지 않는 장난감과 폐플라스틱을<br/>
-          나눔 · 교육 · 재생소재 생산으로 연결하는 순환 플랫폼입니다.<br/>
-          <strong>아이의 웃음, 환경 보호, 그리고 지역 일자리를 하나의 흐름으로 만듭니다.</strong>
-        </p>
-      </section>
+      <div style={{
+        position: 'relative',
+        backgroundImage: 'url(./sub_header_01_01.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '400px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: '0'
+      }}>
+        {/* Dark overlay */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 1
+        }}></div>
+
+        {/* Content */}
+        <div style={{
+          position: 'relative',
+          zIndex: 2,
+          color: 'white',
+          textAlign: 'center',
+          padding: '3rem 2rem'
+        }}>
+          <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', fontWeight: '700' }}>
+            🐘 코끼리공장이 하는 일
+          </h1>
+          <p style={{ fontSize: '1.25rem', opacity: 0.95, marginBottom: '1rem', lineHeight: '1.8' }}>
+            버려지는 장난감을 다시 사회의 자원으로 순환시킵니다
+          </p>
+          <p style={{ fontSize: '1.125rem', opacity: 0.95, marginTop: '1.5rem', lineHeight: '1.8' }}>
+            코끼리공장은 더 이상 사용되지 않는 장난감과 폐플라스틱을<br/>
+            나눔 · 교육 · 재생소재 생산으로 연결하는 순환 플랫폼입니다.<br/>
+            <strong>아이의 웃음, 환경 보호, 그리고 지역 일자리를 하나의 흐름으로 만듭니다.</strong>
+          </p>
+        </div>
+      </div>
 
       {/* 메인 콘텐츠 */}
       <div className="main-content">

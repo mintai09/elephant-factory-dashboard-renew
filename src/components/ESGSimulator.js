@@ -194,25 +194,45 @@ function ESGSimulator() {
   };
 
   return (
-    <div className="main-content">
-      {/* Header */}
-      <div className="section">
-        <div className="card" style={{
-          background: 'linear-gradient(135deg, #10B981 0%, #3B82F6 100%)',
-          color: 'white',
-          textAlign: 'center'
-        }}>
-          <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+    <div>
+      {/* Header with background image */}
+      <div style={{
+        position: 'relative',
+        backgroundImage: 'url(./ESGSimulator_head.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '400px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: '0'
+      }}>
+        {/* Dark overlay */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 1
+        }}></div>
+        {/* Content */}
+        <div style={{ position: 'relative', zIndex: 2, color: 'white', textAlign: 'center', padding: '3rem 2rem' }}>
+          <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', fontWeight: '700' }}>
             🎯 ESG 시뮬레이션
           </h1>
-          <p style={{ fontSize: '1.125rem', opacity: 0.9, marginBottom: '0.5rem' }}>
+          <p style={{ fontSize: '1.125rem', maxWidth: '800px', margin: '0 auto 0.5rem', lineHeight: '1.8' }}>
             폐기물 수거량, 협력 네트워크, 교육 참여 인원만 입력하세요
           </p>
-          <p style={{ fontSize: '0.95rem', opacity: 0.85 }}>
+          <p style={{ fontSize: '0.95rem', opacity: 0.85, maxWidth: '800px', margin: '0 auto' }}>
             에너지 절감, 자원 가치, 업사이클링 부가가치, 환산 지표는 자동으로 계산됩니다
           </p>
         </div>
       </div>
+
+      <div className="main-content">
 
       <div style={{ display: 'grid', gridTemplateColumns: results ? '1fr 1fr' : '1fr', gap: '2rem' }}>
         {/* Input Form */}
@@ -790,6 +810,7 @@ function ESGSimulator() {
         <Link to="/" className="btn btn-outline">
           ← 대시보드로 돌아가기
         </Link>
+      </div>
       </div>
     </div>
   );

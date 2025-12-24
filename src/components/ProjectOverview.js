@@ -1,30 +1,74 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 function ProjectOverview() {
-  const [showTier1Details, setShowTier1Details] = useState(false);
-  const [showTier2Details, setShowTier2Details] = useState(false);
-  const [showTier3Details, setShowTier3Details] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-visible');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
 
   return (
-    <div className="main-content">
-      <div className="section">
-        {/* Hero Section */}
-        <div className="card" style={{
-          background: 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)',
+    <div>
+      {/* Hero Section with Background Image */}
+      <div style={{
+        position: 'relative',
+        backgroundImage: 'url(./sub_header_02_01.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '400px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: '0'
+      }}>
+        {/* Dark overlay */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 1
+        }}></div>
+
+        {/* Content */}
+        <div style={{
+          position: 'relative',
+          zIndex: 2,
           color: 'white',
           textAlign: 'center',
-          padding: '3rem',
-          marginBottom: '2rem'
+          padding: '3rem 2rem'
         }}>
           <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>📊</div>
-          <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>ESG 성과 지표 설명</h1>
+          <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', fontWeight: '700' }}>ESG 성과 지표 설명</h1>
           <p style={{ fontSize: '1.25rem', opacity: 0.95, lineHeight: '1.8' }}>
             코끼리공장 ESG 캠페인의 측정 가능한 성과 지표 체계
           </p>
         </div>
+      </div>
 
-        {/* Mission & Vision */}
-        <div className="card" style={{ marginBottom: '2rem' }}>
+      <div className="main-content">
+      <div className="section">
+
+        {/* 1. Mission & Vision */}
+        <div className="card animate-on-scroll" style={{ marginBottom: '2rem' }}>
           <h2 className="section-title">🎯 우리의 미션</h2>
           <p style={{ fontSize: '1.125rem', lineHeight: '1.8', color: '#374151', marginBottom: '1.5rem' }}>
             코끼리공장은 <strong>순환 경제를 통한 폐기물 문제 해결</strong>을 핵심 존재 목적으로 하는 사회적 기업입니다.
@@ -44,8 +88,8 @@ function ProjectOverview() {
                 노인 일자리 창출, 취약계층 아동 교육 지원을 통한 사회적 가치 창출
               </p>
             </div>
-            <div style={{ padding: '1.5rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem', borderLeft: '4px solid #F59E0B' }}>
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: '#F59E0B' }}>📋 지배구조 (G)</h3>
+            <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', borderLeft: '4px solid #6B7280' }}>
+              <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: '#6B7280' }}>📋 지배구조 (G)</h3>
               <p style={{ color: '#6B7280', lineHeight: '1.6' }}>
                 투명한 성과 공유, 자원 가치 보존, 업사이클링 부가가치 창출
               </p>
@@ -53,72 +97,88 @@ function ProjectOverview() {
           </div>
         </div>
 
-        {/* 3-Tier KPI Structure */}
-        <div className="card" style={{ marginBottom: '2rem' }}>
+        {/* 2. 3-Tier KPI Structure */}
+        <div className="card animate-on-scroll" style={{ marginBottom: '2rem' }}>
           <h2 className="section-title">📊 3-Tier KPI 체계 구조</h2>
-          <p className="section-subtitle">
+          <p className="section-subtitle" style={{ marginBottom: '2rem' }}>
             코끼리공장은 3단계 계층 구조의 KPI 시스템으로 성과를 측정하고 관리합니다.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {/* Tier 1 */}
             <div style={{ padding: '2rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', borderLeft: '6px solid #10B981' }}>
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#10B981' }}>
-                🔑 Tier 1: 핵심 KPI (3개)
-              </h3>
-              <p style={{ color: '#6B7280', marginBottom: '1rem' }}>
-                → 매월 측정, 경영진 보고용
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ fontSize: '1.5rem', color: '#10B981', margin: 0 }}>
+                  🔑 Tier 1: 핵심 KPI (3개)
+                </h3>
+                <Link to="/tier1-details" className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
+                  상세보기 →
+                </Link>
+              </div>
+              <p style={{ color: '#6B7280', marginBottom: '1.5rem' }}>
+                매월 측정, 경영진 보고용
               </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-                <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem' }}>
-                  <strong>KPI #1:</strong> 탄소 저감 기여도 (E)
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+                <div style={{ padding: '1.25rem', backgroundColor: 'white', borderRadius: '0.375rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                  <div style={{ fontSize: '1rem', fontWeight: '500', color: '#111827' }}>
+                    탄소 저감 기여도 (E)
+                  </div>
                 </div>
-                <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem' }}>
-                  <strong>KPI #2:</strong> 순환 자원 기여도 (E)
+                <div style={{ padding: '1.25rem', backgroundColor: 'white', borderRadius: '0.375rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                  <div style={{ fontSize: '1rem', fontWeight: '500', color: '#111827' }}>
+                    순환 자원 기여도 (E)
+                  </div>
                 </div>
-                <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem' }}>
-                  <strong>KPI #3:</strong> 사회적 임팩트 지수 (S)
+                <div style={{ padding: '1.25rem', backgroundColor: 'white', borderRadius: '0.375rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                  <div style={{ fontSize: '1rem', fontWeight: '500', color: '#111827' }}>
+                    사회적 임팩트 지수 (S)
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Tier 2 */}
             <div style={{ padding: '2rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', borderLeft: '6px solid #3B82F6' }}>
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#3B82F6' }}>
-                📊 Tier 2: 보조 KPI (5개)
-              </h3>
-              <p style={{ color: '#6B7280', marginBottom: '1rem' }}>
-                → 분기별 측정, 상세 분석용
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ fontSize: '1.5rem', color: '#3B82F6', margin: 0 }}>
+                  📊 Tier 2: <strong style={{ fontWeight: '700' }}>보조 KPI</strong> (5개)
+                </h3>
+                <Link to="/tier2-details" className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
+                  상세보기 →
+                </Link>
+              </div>
+              <p style={{ color: '#6B7280', marginBottom: '1.5rem' }}>
+                분기별 측정, 상세 분석용
               </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', fontSize: '0.875rem' }}>
-                <div style={{ padding: '0.75rem', backgroundColor: 'white', borderRadius: '0.375rem' }}>
-                  KPI #4: 에너지 절감 효과 (E)
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.875rem' }}>
+                <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem', fontSize: '0.95rem', color: '#374151', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+                  에너지 절감 효과 (E)
                 </div>
-                <div style={{ padding: '0.75rem', backgroundColor: 'white', borderRadius: '0.375rem' }}>
-                  KPI #5: 협력 네트워크 확장도 (S)
+                <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem', fontSize: '0.95rem', color: '#374151', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+                  협력 네트워크 확장도 (S)
                 </div>
-                <div style={{ padding: '0.75rem', backgroundColor: 'white', borderRadius: '0.375rem' }}>
-                  KPI #6: 자원 가치 보존액 (G)
+                <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem', fontSize: '0.95rem', color: '#374151', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+                  자원 가치 보존액 (G)
                 </div>
-                <div style={{ padding: '0.75rem', backgroundColor: 'white', borderRadius: '0.375rem' }}>
-                  KPI #7: 교육 도달 범위 (S)
+                <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem', fontSize: '0.95rem', color: '#374151', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+                  교육 도달 범위 (S)
                 </div>
-                <div style={{ padding: '0.75rem', backgroundColor: 'white', borderRadius: '0.375rem' }}>
-                  KPI #8: 업사이클링 부가가치율 (G)
+                <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem', fontSize: '0.95rem', color: '#374151', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+                  업사이클링 부가가치율 (G)
                 </div>
               </div>
             </div>
 
             {/* Tier 3 */}
-            <div style={{ padding: '2rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', borderLeft: '6px solid #F59E0B' }}>
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#F59E0B' }}>
+            <div style={{ padding: '2rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', borderLeft: '6px solid #6B7280' }}>
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#6B7280' }}>
                 🏆 Tier 3: 통합 KPI (1개)
               </h3>
-              <p style={{ color: '#6B7280', marginBottom: '1rem' }}>
-                → 연간 평가, 대외 공시용
+              <p style={{ color: '#6B7280', marginBottom: '1.5rem' }}>
+                연간 평가, 대외 공시용
               </p>
-              <div style={{ padding: '1.5rem', backgroundColor: 'white', borderRadius: '0.375rem', textAlign: 'center' }}>
-                <strong style={{ fontSize: '1.125rem' }}>ESG 임팩트 스코어</strong>
+              <div style={{ padding: '1.5rem', backgroundColor: 'white', borderRadius: '0.375rem', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                <strong style={{ fontSize: '1.125rem', color: '#111827' }}>ESG 임팩트 스코어</strong>
                 <div style={{ marginTop: '1rem', fontSize: '0.875rem', color: '#6B7280' }}>
                   = (E 점수 × 0.5) + (S 점수 × 0.3) + (G 점수 × 0.2)
                 </div>
@@ -127,454 +187,99 @@ function ProjectOverview() {
           </div>
         </div>
 
-        {/* Tier 1 KPI Detailed Formulas */}
-        <div className="section">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h2 className="section-title">🔬 Tier 1 핵심 KPI 공식 및 과학적 근거</h2>
-            <button
-              onClick={() => setShowTier1Details(!showTier1Details)}
-              className="btn btn-outline"
-              style={{ width: 'auto', padding: '0.5rem 1rem' }}
-            >
-              {showTier1Details ? '상세 숨기기 ▲' : '상세 보기 ▼'}
-            </button>
-          </div>
-
-          {!showTier1Details && (
-            <div style={{
-              padding: '2rem',
-              backgroundColor: '#F9FAFB',
-              borderRadius: '0.5rem',
-              textAlign: 'center',
-              color: '#6B7280'
-            }}>
-              상세 내용을 보려면 "상세 보기" 버튼을 클릭하세요.
-            </div>
-          )}
-
-          {showTier1Details && (
-            <div>
-
-          {/* KPI #1: Carbon Reduction */}
-          <div className="card" style={{ marginBottom: '2rem' }}>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#10B981' }}>
-              🌍 KPI #1. 탄소 저감 기여도 (Carbon Reduction Contribution)
-            </h3>
-
-            <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>측정 지표</h4>
-              <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#10B981' }}>
-                월간 탄소 저감량 (tonnes CO₂-eq)
-              </p>
-            </div>
-
-            <div style={{ padding: '1.5rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>기본 산출식</h4>
-              <div style={{
-                fontFamily: 'monospace',
-                fontSize: '1.125rem',
-                padding: '1rem',
-                backgroundColor: 'white',
-                borderRadius: '0.375rem',
-                marginBottom: '1rem'
-              }}>
-                탄소 저감량 = Σ(폐기물 수거량ᵢ × 소각 배출계수ᵢ)
-              </div>
-              <p style={{ color: '#6B7280', lineHeight: '1.8' }}>
-                폐기물을 재활용/업사이클링하지 않고 소각할 경우 발생하는 CO₂ 배출량을 기준으로 계산합니다.
-              </p>
-            </div>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>소각 배출계수 (IPCC 2006 기준)</h4>
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>폐기물 유형</th>
-                    <th>배출계수</th>
-                    <th>설명</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>PET</strong></td>
-                    <td style={{ color: '#10B981', fontWeight: '600' }}>2.29 kg CO₂/kg</td>
-                    <td>폴리에틸렌 테레프탈레이트 (페트병)</td>
-                  </tr>
-                  <tr>
-                    <td><strong>HDPE</strong></td>
-                    <td style={{ color: '#10B981', fontWeight: '600' }}>3.12 kg CO₂/kg</td>
-                    <td>고밀도 폴리에틸렌 (용기류)</td>
-                  </tr>
-                  <tr>
-                    <td><strong>혼합 플라스틱</strong></td>
-                    <td style={{ color: '#F59E0B', fontWeight: '600' }}>2.75 kg CO₂/kg</td>
-                    <td>장난감 등 복합 플라스틱</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            {/* RBF and UF Factors */}
-            <div style={{ padding: '1.5rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem', color: '#F59E0B' }}>
-                ⚡ RBF 및 UF 보정 계수 (순환 경제 가중치)
-              </h4>
-
-              <div style={{ marginBottom: '1.5rem' }}>
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>계수명</th>
-                      <th>값</th>
-                      <th>정의 및 목적</th>
-                      <th>근거</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td style={{ fontWeight: '600', color: '#DC2626' }}>
-                        RBF<br/>(Reuse Benefit Factor)
-                      </td>
-                      <td style={{ fontSize: '1.5rem', fontWeight: '700', color: '#DC2626' }}>3.0</td>
-                      <td>
-                        재사용(수리/기부)되는 장난감에 대한 탄소 절감 가중치.
-                        신제품 생산을 완전히 대체하여 에너지 투입을 대폭 줄임.
-                      </td>
-                      <td>
-                        재사용은 신제품 생산 대비 3~5배의 환경 효과.
-                        보수적으로 3.0 적용.
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style={{ fontWeight: '600', color: '#059669' }}>
-                        UF<br/>(Upcycling Factor)
-                      </td>
-                      <td style={{ fontSize: '1.5rem', fontWeight: '700', color: '#059669' }}>2.5</td>
-                      <td>
-                        고품질 재생원료나 업사이클 제품(섬유 원료, 교육 키트 등)으로
-                        전환할 때 부여하는 가중치.
-                      </td>
-                      <td>
-                        단순 재활용보다 높고(더 많은 버진 소재 대체),
-                        재사용보다는 낮은 중간 수준의 환경 가치.
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem' }}>
-                <h5 style={{ fontSize: '1rem', marginBottom: '0.75rem', fontWeight: '600' }}>
-                  최종 산출식 (가중치 적용):
-                </h5>
-                <div style={{
-                  fontFamily: 'monospace',
-                  fontSize: '0.9rem',
-                  lineHeight: '1.8',
-                  color: '#374151'
-                }}>
-                  총 CO₂ 저감량 = Σ(순환 경로별 폐기물량 × 기본 CO₂ 저감량 × 보정계수)
-                  <br/><br/>
-                  예시: 1톤의 장난감 중 재사용 20%, 업사이클링 50%, 재활용 30%인 경우:
-                  <br/>
-                  총 CO₂ 저감 가중치 = (0.2 × 3.0) + (0.5 × 2.5) + (0.3 × 1.0)
-                  <br/>
-                  = 0.60 + 1.25 + 0.30 = <strong style={{ color: '#10B981' }}>2.15</strong> (기본 재활용 대비 2.15배 효과)
-                </div>
-              </div>
-            </div>
-
-            <div style={{ padding: '1.5rem', backgroundColor: '#E5E7EB', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>과학적 근거</h4>
-              <ul style={{ lineHeight: '1.8', color: '#374151' }}>
-                <li><strong>IPCC 2006 GL Volume 5</strong> - 폐기물 소각 배출계수</li>
-                <li><strong>『국가 온실가스 인벤토리 보고서』</strong> (환경부, 2024)</li>
-                <li><strong>Ellen MacArthur Foundation</strong> - 순환경제 가치 측정 방법론</li>
-              </ul>
-            </div>
-
-            <div style={{ padding: '1.5rem', backgroundColor: '#DBEAFE', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>ESG 평가 연계</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-                <div>
-                  <strong>KCGS:</strong> 환경경영 → 기후변화 대응
-                </div>
-                <div>
-                  <strong>CDP:</strong> C4 (목표 및 성과), C6 (Scope 3)
-                </div>
-                <div>
-                  <strong>GRI:</strong> 305-5 (배출 감축량)
-                </div>
-              </div>
-            </div>
-
-            <div style={{ padding: '1.5rem', backgroundColor: '#F3F4F6', borderRadius: '0.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>목표 설정</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
-                <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.5rem' }}>기본</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#F59E0B' }}>1.5 tonnes</div>
-                  <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>월 이상</div>
-                </div>
-                <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.5rem' }}>우수</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#3B82F6' }}>3.0 tonnes</div>
-                  <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>월 이상</div>
-                </div>
-                <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.5rem' }}>탁월</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10B981' }}>5.0 tonnes</div>
-                  <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>월 이상</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* KPI #2: Circular Resource */}
-          <div className="card" style={{ marginBottom: '2rem' }}>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#10B981' }}>
-              ♻️ KPI #2. 순환 자원 기여도 (Circular Resource Contribution)
-            </h3>
-
-            <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>측정 지표</h4>
-              <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#10B981' }}>
-                폐기물 전환율 (%)
-              </p>
-            </div>
-
-            <div style={{ padding: '1.5rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>산출식</h4>
-              <div style={{
-                fontFamily: 'monospace',
-                fontSize: '1.125rem',
-                padding: '1rem',
-                backgroundColor: 'white',
-                borderRadius: '0.375rem'
-              }}>
-                전환율 = (업사이클링 제품 생산량 / 총 수거 폐기물량) × 100
-              </div>
-            </div>
-
-            <div style={{ padding: '1.5rem', backgroundColor: '#E5E7EB', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>과학적 근거</h4>
-              <ul style={{ lineHeight: '1.8', color: '#374151' }}>
-                <li><strong>Ellen MacArthur Foundation</strong> - "The New Plastics Economy" (2016)</li>
-                <li><strong>GRI 306-4</strong> - 폐기 이외로 전환된 폐기물</li>
-              </ul>
-            </div>
-
-            <div style={{ padding: '1.5rem', backgroundColor: '#F3F4F6', borderRadius: '0.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>목표 설정</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>기본</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#F59E0B' }}>70%</div>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>우수</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#3B82F6' }}>80%</div>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>탁월</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10B981' }}>85%</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* KPI #3: Social Impact */}
-          <div className="card" style={{ marginBottom: '2rem' }}>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#3B82F6' }}>
-              🤝 KPI #3. 사회적 임팩트 지수 (Social Impact Index)
-            </h3>
-
-            <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>측정 지표</h4>
-              <p style={{ fontSize: '1.25rem', fontWeight: '600', color: '#3B82F6' }}>
-                사회적 가치 창출액 (원)
-              </p>
-            </div>
-
-            <div style={{ padding: '1.5rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>산출식</h4>
-              <div style={{
-                fontFamily: 'monospace',
-                fontSize: '1rem',
-                padding: '1rem',
-                backgroundColor: 'white',
-                borderRadius: '0.375rem',
-                lineHeight: '1.8'
-              }}>
-                사회적 가치 = (노인 일자리 창출 가치) + (교육 참여 가치)
-                <br/><br/>
-                1) 일자리 가치 = 고용 인원 × 월 근무시간 × 시간당 임금
-                <br/>
-                2) 교육 가치 = 직접 참여자 × 30,000원
-              </div>
-            </div>
-
-            <div style={{ padding: '1.5rem', backgroundColor: '#E5E7EB', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>과학적 근거</h4>
-              <ul style={{ lineHeight: '1.8', color: '#374151' }}>
-                <li><strong>한국사회적기업진흥원</strong> - "사회적 가치 측정 가이드라인" (2021)</li>
-                <li><strong>고용노동부</strong> - "노인 일자리 사업 성과 측정 매뉴얼" (2023)</li>
-              </ul>
-            </div>
-
-            <div style={{ padding: '1.5rem', backgroundColor: '#F3F4F6', borderRadius: '0.5rem' }}>
-              <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>목표 설정</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>기본</div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#F59E0B' }}>500만원</div>
-                  <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>월 이상</div>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>우수</div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#3B82F6' }}>800만원</div>
-                  <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>월 이상</div>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>탁월</div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#10B981' }}>1,200만원</div>
-                  <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>월 이상</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          </div>
-          )}
-        </div>
-
-        {/* Tier 2 KPI Detailed Descriptions */}
-        <div className="section" style={{ marginTop: '3rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h2 className="section-title">📊 Tier 2 보조 KPI (5개) 상세 설명</h2>
-            <button
-              onClick={() => setShowTier2Details(!showTier2Details)}
-              className="btn btn-outline"
-              style={{ width: 'auto', padding: '0.5rem 1rem' }}
-            >
-              {showTier2Details ? '상세 숨기기 ▲' : '상세 보기 ▼'}
-            </button>
-          </div>
-          <p className="section-subtitle">
-            Tier 1 핵심 KPI를 보완하고, Tier 3 통합 스코어 산출을 위한 세부 구성 요소입니다.
+        {/* 3. ESG Impact Score Grading */}
+        <div className="card animate-on-scroll" style={{ marginBottom: '2rem' }}>
+          <h2 className="section-title">🏆 등급 체계</h2>
+          <p className="section-subtitle" style={{ marginBottom: '2rem' }}>
+            ESG 임팩트 스코어에 따른 평가 등급 및 가중치 배분
           </p>
 
-          {!showTier2Details && (
-            <div style={{
-              padding: '2rem',
-              backgroundColor: '#F9FAFB',
-              borderRadius: '0.5rem',
-              textAlign: 'center',
-              color: '#6B7280'
-            }}>
-              상세 내용을 보려면 "상세 보기" 버튼을 클릭하세요.
-            </div>
-          )}
-
-          {showTier2Details && (
-            <div>
-
-          {/* KPI #4: Energy Saving */}
-          <div className="card" style={{ marginTop: '2rem' }}>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#10B981' }}>
-              ⚡ KPI #4. 에너지 절감 효과 (E)
-            </h3>
-            <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1rem' }}>
-              <p style={{ marginBottom: '0.5rem' }}><strong>측정 지표:</strong> 에너지 절감량 (kWh)</p>
-              <p style={{ marginBottom: '0.5rem' }}><strong>산출식:</strong> Σ(제품 생산량 × 에너지 절감 계수)</p>
-              <p style={{ marginBottom: '0.5rem' }}><strong>Tier 3 기여도:</strong> E 점수의 20%</p>
-              <p><strong>목표:</strong> 월 15,000 kWh 이상</p>
-            </div>
-            <div style={{ padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem' }}>
-              <strong>에너지 절감 계수:</strong> PET 13.9 kWh/kg, HDPE 12.5 kWh/kg, 혼합 플라스틱 11.1 kWh/kg
-              <br/><small style={{ color: '#6B7280' }}>출처: Plastics Europe</small>
+          <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '2rem' }}>
+            <h3 style={{ fontSize: '1.125rem', marginBottom: '1.5rem', color: '#111827' }}>가중치 배분 논리</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
+              <div style={{ padding: '1.5rem', backgroundColor: '#F0FDF4', borderRadius: '0.375rem', borderLeft: '4px solid #10B981' }}>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#10B981', marginBottom: '0.5rem' }}>50%</div>
+                <div style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#111827' }}>환경 (E)</div>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280', lineHeight: '1.6' }}>
+                  순환 경제를 통한 폐기물 문제 해결이 코끼리공장의 핵심 존재 목적
+                </div>
+              </div>
+              <div style={{ padding: '1.5rem', backgroundColor: '#EFF6FF', borderRadius: '0.375rem', borderLeft: '4px solid #3B82F6' }}>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#3B82F6', marginBottom: '0.5rem' }}>30%</div>
+                <div style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#111827' }}>사회 (S)</div>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280', lineHeight: '1.6' }}>
+                  사회적 기업으로서 취약계층 지원 및 일자리 창출이 중요한 미션
+                </div>
+              </div>
+              <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.375rem', borderLeft: '4px solid #6B7280' }}>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#6B7280', marginBottom: '0.5rem' }}>20%</div>
+                <div style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#111827' }}>지배구조 (G)</div>
+                <div style={{ fontSize: '0.875rem', color: '#6B7280', lineHeight: '1.6' }}>
+                  투명한 운영과 부가가치 창출을 통한 재무적 지속 가능성
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* KPI #5: Partner Network */}
-          <div className="card">
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#3B82F6' }}>
-              🤝 KPI #5. 협력 네트워크 확장도 (S)
-            </h3>
-            <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1rem' }}>
-              <p style={{ marginBottom: '0.5rem' }}><strong>측정 지표:</strong> 활성 협력 기관 수 (개)</p>
-              <p style={{ marginBottom: '0.5rem' }}><strong>측정 기준:</strong> 최근 3개월 내 실제 활동 기관</p>
-              <p style={{ marginBottom: '0.5rem' }}><strong>Tier 3 기여도:</strong> S 점수의 50%</p>
-              <p><strong>목표:</strong> 10개 기관 이상</p>
-            </div>
-            <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
-              <strong>협력 기관 유형:</strong> 민간 기업, 공공기관, 교육기관, 비영리단체
-              <br/><small style={{ color: '#6B7280' }}>GRI 102-12, 102-13 연계</small>
-            </div>
-          </div>
-
-          {/* KPI #6: Resource Value */}
-          <div className="card">
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#F59E0B' }}>
-              💰 KPI #6. 자원 가치 보존액 (G)
-            </h3>
-            <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1rem' }}>
-              <p style={{ marginBottom: '0.5rem' }}><strong>측정 지표:</strong> 자원 가치 보존액 (원)</p>
-              <p style={{ marginBottom: '0.5rem' }}><strong>산출식:</strong> Σ(수거량 × 재활용 원료 시장가격)</p>
-              <p style={{ marginBottom: '0.5rem' }}><strong>Tier 3 기여도:</strong> G 점수의 60%</p>
-              <p><strong>목표:</strong> 월 500,000원 이상</p>
-            </div>
-            <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
-              <strong>시장 가격:</strong> 혼합 플라스틱 재활용 원료 500원/kg
-              <br/><small style={{ color: '#6B7280' }}>폐기물을 자산으로 전환하는 순환 경제의 기초적 경제 효과</small>
-            </div>
-          </div>
-
-          {/* KPI #7: Education Reach */}
-          <div className="card">
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#3B82F6' }}>
-              📚 KPI #7. 교육 도달 범위 (S)
-            </h3>
-            <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1rem' }}>
-              <p style={{ marginBottom: '0.5rem' }}><strong>측정 지표:</strong> 교육 효과 지수 (점)</p>
-              <p style={{ marginBottom: '0.5rem' }}><strong>산출식:</strong> (직접 참여 × 10) + (간접 참여 × 1)</p>
-              <p style={{ marginBottom: '0.5rem' }}><strong>Tier 3 기여도:</strong> S 점수의 50%</p>
-              <p><strong>목표:</strong> 1,200점 이상</p>
-            </div>
-            <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
-              <strong>가중치 차등 적용:</strong> 직접 참여(워크숍, 현장 교육) 10배, 간접 참여(온라인, 홍보) 1배
-              <br/><small style={{ color: '#6B7280' }}>실제 행동 변화 가능성이 높은 직접 참여의 질적 성과 우선 측정</small>
-            </div>
-          </div>
-
-          {/* KPI #8: Upcycling Value */}
-          <div className="card">
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#F59E0B' }}>
-              📈 KPI #8. 업사이클링 부가가치율 (G)
-            </h3>
-            <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1rem' }}>
-              <p style={{ marginBottom: '0.5rem' }}><strong>측정 지표:</strong> 부가가치율 (%)</p>
-              <p style={{ marginBottom: '0.5rem' }}><strong>산출식:</strong> [(제품 판매가 - 원료 가치) / 원료 가치] × 100</p>
-              <p style={{ marginBottom: '0.5rem' }}><strong>Tier 3 기여도:</strong> G 점수의 40%</p>
-              <p><strong>목표:</strong> 400% 이상</p>
-            </div>
-            <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
-              <strong>전략적 의의:</strong> 원료 가치가 낮은 복합 플라스틱을 고부가가치 제품으로 전환하여
-              재무적 생존력을 확보하는 코끼리공장의 핵심 비즈니스 모델 입증
-            </div>
-          </div>
-          </div>
-          )}
+          <h3 style={{ fontSize: '1.125rem', marginBottom: '1rem', color: '#111827' }}>성과 등급표</h3>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>등급</th>
+                <th>점수 범위</th>
+                <th>의미</th>
+                <th>권장 조치</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style={{ backgroundColor: '#F0FDF4' }}>
+                <td style={{ fontSize: '1.125rem', fontWeight: '700', color: '#10B981' }}>A+ (Outstanding)</td>
+                <td style={{ fontWeight: '600' }}>90-100점</td>
+                <td>탁월한 성과</td>
+                <td>우수 사례 공유, 대외 홍보 활용</td>
+              </tr>
+              <tr>
+                <td style={{ fontSize: '1.125rem', fontWeight: '700', color: '#10B981' }}>A (Excellent)</td>
+                <td style={{ fontWeight: '600' }}>80-89점</td>
+                <td>우수</td>
+                <td>지속 유지 및 일부 개선 영역 발굴</td>
+              </tr>
+              <tr>
+                <td style={{ fontSize: '1.125rem', fontWeight: '700', color: '#3B82F6' }}>B (Good)</td>
+                <td style={{ fontWeight: '600' }}>70-79점</td>
+                <td>양호</td>
+                <td>주요 KPI 개선 전략 수립</td>
+              </tr>
+              <tr>
+                <td style={{ fontSize: '1.125rem', fontWeight: '700', color: '#3B82F6' }}>C (Satisfactory)</td>
+                <td style={{ fontWeight: '600' }}>60-69점</td>
+                <td>보통</td>
+                <td>Tier 2 보조 KPI 집중 개선</td>
+              </tr>
+              <tr>
+                <td style={{ fontSize: '1.125rem', fontWeight: '700', color: '#DC2626' }}>D (Needs Improvement)</td>
+                <td style={{ fontWeight: '600' }}>40-59점</td>
+                <td>개선 필요</td>
+                <td>캠페인 전략 전면 재검토</td>
+              </tr>
+              <tr>
+                <td style={{ fontSize: '1.125rem', fontWeight: '700', color: '#DC2626' }}>F (Deficient)</td>
+                <td style={{ fontWeight: '600' }}>0-39점</td>
+                <td>미흡</td>
+                <td>데이터 수집 및 관리 시스템 문제 해결</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
-        {/* Environmental Conversion Indicators */}
-        <div className="card" style={{ marginBottom: '2rem', marginTop: '3rem' }}>
-          <h2 className="section-title">🌳 환산 지표 (쉽게 알아볼 수 있는 지표)</h2>
-          <p className="section-subtitle">
+        {/* 4. Environmental Conversion Indicators */}
+        <div className="card animate-on-scroll" style={{ marginBottom: '2rem' }}>
+          <h2 className="section-title">🌳 환산 지표</h2>
+          <p className="section-subtitle" style={{ marginBottom: '2rem' }}>
             CO₂ 저감량을 일상적인 지표로 변환하여 성과를 직관적으로 이해할 수 있도록 합니다.
           </p>
 
-          <table className="data-table" style={{ marginTop: '1.5rem' }}>
+          <table className="data-table">
             <thead>
               <tr>
                 <th>환산 지표</th>
@@ -586,137 +291,37 @@ function ProjectOverview() {
             <tbody>
               <tr>
                 <td style={{ fontWeight: '600' }}>🌲 나무 그루 수</td>
-                <td style={{ fontSize: '1.125rem', color: '#10B981' }}>0.113 그루/년</td>
+                <td style={{ fontSize: '1.125rem', color: '#10B981', fontWeight: '600' }}>0.113 그루/년</td>
                 <td>성숙한 나무 1그루가 1년간 약 22 kg CO₂ 흡수</td>
                 <td>미국 농무부 (USDA)</td>
               </tr>
               <tr>
                 <td style={{ fontWeight: '600' }}>🚗 자동차 운행 감축</td>
-                <td style={{ fontSize: '1.125rem', color: '#3B82F6' }}>0.000539 car-years</td>
+                <td style={{ fontSize: '1.125rem', color: '#3B82F6', fontWeight: '600' }}>0.000539 car-years</td>
                 <td>승용차 1대의 연간 배출량 약 4.6 tonnes CO₂</td>
                 <td>미국 환경보호국 (EPA)</td>
               </tr>
               <tr>
                 <td style={{ fontWeight: '600' }}>🧊 북극 해빙 보존</td>
-                <td style={{ fontSize: '1.125rem', color: '#06B6D4' }}>0.00744 m²</td>
+                <td style={{ fontSize: '1.125rem', color: '#06B6D4', fontWeight: '600' }}>0.00744 m²</td>
                 <td>CO₂ 1톤 배출 시 북극 해빙 약 3 m² 감소</td>
                 <td>기후 변화 관련 과학 연구</td>
               </tr>
             </tbody>
           </table>
 
-          <div style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem' }}>
+          <div style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem', borderLeft: '4px solid #10B981' }}>
             <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem', color: '#10B981' }}>
-              홍보 메시지 예시 (누적 임팩트 강조)
+              홍보 메시지 예시
             </h4>
-            <ul style={{ lineHeight: '2', color: '#374151' }}>
+            <ul style={{ lineHeight: '2', color: '#374151', paddingLeft: '1.5rem' }}>
               <li>"장난감 1톤 순환은 소나무 <strong>113그루</strong>가 1년간 흡수하는 탄소와 같습니다."</li>
               <li>"장난감 1톤 순환은 승용차 한 대를 약 <strong>2개월간</strong> 운행 중단시킨 효과와 같습니다."</li>
               <li>"장난감 1톤 순환으로 북극곰 서식지 빙하 약 <strong>7.44 m²</strong>를 보존했습니다."</li>
             </ul>
           </div>
         </div>
-
-        {/* ESG Impact Score Grading */}
-        <div className="card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h2 className="section-title">🏆 Tier 3: ESG 임팩트 스코어 등급 체계</h2>
-            <button
-              onClick={() => setShowTier3Details(!showTier3Details)}
-              className="btn btn-outline"
-              style={{ width: 'auto', padding: '0.5rem 1rem' }}
-            >
-              {showTier3Details ? '상세 숨기기 ▲' : '상세 보기 ▼'}
-            </button>
-          </div>
-
-          {!showTier3Details && (
-            <div style={{
-              padding: '2rem',
-              backgroundColor: '#F9FAFB',
-              borderRadius: '0.5rem',
-              textAlign: 'center',
-              color: '#6B7280'
-            }}>
-              상세 내용을 보려면 "상세 보기" 버튼을 클릭하세요.
-            </div>
-          )}
-
-          {showTier3Details && (
-            <div>
-
-          <div style={{ padding: '1.5rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
-            <h4 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>가중치 배분 논리</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
-              <div style={{ padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.375rem', borderLeft: '4px solid #10B981' }}>
-                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#10B981', marginBottom: '0.5rem' }}>50%</div>
-                <div style={{ fontWeight: '600', marginBottom: '0.5rem' }}>환경 (E)</div>
-                <div style={{ fontSize: '0.875rem', color: '#6B7280', lineHeight: '1.6' }}>
-                  순환 경제를 통한 폐기물 문제 해결이 코끼리공장의 핵심 존재 목적
-                </div>
-              </div>
-              <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.375rem', borderLeft: '4px solid #3B82F6' }}>
-                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#3B82F6', marginBottom: '0.5rem' }}>30%</div>
-                <div style={{ fontWeight: '600', marginBottom: '0.5rem' }}>사회 (S)</div>
-                <div style={{ fontSize: '0.875rem', color: '#6B7280', lineHeight: '1.6' }}>
-                  사회적 기업으로서의 정체성과 취약 계층 고용, 환경 교육의 중요성
-                </div>
-              </div>
-              <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.375rem', borderLeft: '4px solid #F59E0B' }}>
-                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#F59E0B', marginBottom: '0.5rem' }}>20%</div>
-                <div style={{ fontWeight: '600', marginBottom: '0.5rem' }}>경제 (G)</div>
-                <div style={{ fontSize: '0.875rem', color: '#6B7280', lineHeight: '1.6' }}>
-                  E와 S 활동의 기반이 되는 재무적 지속가능성과 순환 경제 기여도
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <table className="data-table" style={{ marginBottom: '1.5rem' }}>
-            <thead>
-              <tr>
-                <th>등급</th>
-                <th>점수 범위</th>
-                <th>평가 의미</th>
-                <th>전략적 목표 및 활용</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style={{ backgroundColor: '#F0FDF4' }}>
-                <td style={{ fontSize: '1.125rem', fontWeight: '700', color: '#10B981' }}>S (Superior)</td>
-                <td style={{ fontWeight: '600' }}>80-100점</td>
-                <td>탁월, 업계 최고 수준</td>
-                <td>순환성 지수 80% 이상 유지, 글로벌 모범 사례 제시</td>
-              </tr>
-              <tr style={{ backgroundColor: '#EFF6FF' }}>
-                <td style={{ fontSize: '1.125rem', fontWeight: '700', color: '#3B82F6' }}>A (Advanced)</td>
-                <td style={{ fontWeight: '600' }}>60-80점</td>
-                <td>우수, 선도적 활동</td>
-                <td>지속가능경영 보고서 발간 및 제3자 검증 추진 기반</td>
-              </tr>
-              <tr>
-                <td style={{ fontSize: '1.125rem', fontWeight: '700', color: '#059669' }}>B (Basic)</td>
-                <td style={{ fontWeight: '600' }}>40-60점</td>
-                <td>양호, 기본 목표 달성</td>
-                <td>KPI 데이터의 안정적인 측정 및 보고 정착</td>
-              </tr>
-              <tr>
-                <td style={{ fontSize: '1.125rem', fontWeight: '700', color: '#F59E0B' }}>C (Caution)</td>
-                <td style={{ fontWeight: '600' }}>20-40점</td>
-                <td>주의, 개선 필요</td>
-                <td>핵심 활동(E, S)에 대한 프로세스 및 목표 재검토</td>
-              </tr>
-              <tr>
-                <td style={{ fontSize: '1.125rem', fontWeight: '700', color: '#DC2626' }}>D (Deficient)</td>
-                <td style={{ fontWeight: '600' }}>0-20점</td>
-                <td>미흡, 전면 재검토</td>
-                <td>데이터 수집 및 관리 시스템의 문제점 해결</td>
-              </tr>
-            </tbody>
-          </table>
-          </div>
-          )}
-        </div>
+      </div>
       </div>
     </div>
   );

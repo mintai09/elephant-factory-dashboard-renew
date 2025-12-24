@@ -5,6 +5,8 @@ import Navbar from './components/Navbar';
 import HomePage from './components/HomePage';
 import KogongjangOverview from './components/KogongjangOverview';
 import ProjectOverview from './components/ProjectOverview';
+import Tier1Details from './components/Tier1Details';
+import Tier2Details from './components/Tier2Details';
 import DashboardWrapper from './components/DashboardWrapper';
 import CompanyList from './components/CompanyList';
 import CompanyDetail from './components/CompanyDetail';
@@ -24,6 +26,8 @@ function AppContent() {
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<KogongjangOverview />} />
         <Route path="/overview" element={<ProjectOverview />} />
+        <Route path="/tier1-details" element={<Tier1Details />} />
+        <Route path="/tier2-details" element={<Tier2Details />} />
         <Route path="/dashboard" element={<DashboardWrapper />} />
         <Route path="/companies" element={<CompanyList />} />
         <Route path="/company/:companyId" element={<CompanyDetail />} />

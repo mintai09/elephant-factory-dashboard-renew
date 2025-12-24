@@ -26,12 +26,43 @@ function CompanyList() {
   };
 
   return (
-    <div className="main-content">
+    <div>
+      {/* Header with background image */}
+      <div style={{
+        position: 'relative',
+        backgroundImage: 'url(./CompanyList_head.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '400px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: '0'
+      }}>
+        {/* Dark overlay */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 1
+        }}></div>
+        {/* Content */}
+        <div style={{ position: 'relative', zIndex: 2, color: 'white', textAlign: 'center', padding: '3rem 2rem' }}>
+          <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', fontWeight: '700' }}>
+            🏢 기업별 성과
+          </h1>
+          <p style={{ fontSize: '1.125rem', maxWidth: '800px', margin: '0 auto', lineHeight: '1.8' }}>
+            각 기업의 ESG 캠페인 참여 성과를 확인하세요. 카드를 클릭하면 상세 성과를 확인할 수 있습니다.
+          </p>
+        </div>
+      </div>
+
+      <div className="main-content">
       <div className="section">
-        <h1 className="section-title">🏢 기업별 성과</h1>
-        <p className="section-subtitle">
-          각 기업의 ESG 캠페인 참여 성과를 확인하세요. 카드를 클릭하면 상세 성과를 확인할 수 있습니다.
-        </p>
 
         {/* 기업 카드 그리드 */}
         <div className="card-grid">
@@ -337,6 +368,7 @@ function CompanyList() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
