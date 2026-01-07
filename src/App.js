@@ -14,6 +14,8 @@ import ESGSimulator from './components/ESGSimulator';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import DataInsert from './components/DataInsert';
+import Chatbot from './components/Chatbot';
+import ChatbotPage from './components/ChatbotPage';
 
 function AppContent() {
   const location = useLocation();
@@ -33,9 +35,11 @@ function AppContent() {
         <Route path="/company/:companyId" element={<CompanyDetail />} />
         <Route path="/simulator" element={<ESGSimulator />} />
         <Route path="/data-insert" element={<DataInsert />} />
+        <Route path="/chatbot" element={<ChatbotPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
       </Routes>
+      {!hideNavbar && <Chatbot />}
     </div>
   );
 }
