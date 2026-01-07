@@ -60,11 +60,10 @@ function HomePage() {
   // Calculate average participation rate
   const avgParticipationRate = companies.reduce((sum, c) => sum + c.performance.participationRate, 0) / companies.length;
 
-  // Calculate ESG Impact Score (Tier 3)
-  const avgEScore = companies.reduce((sum, c) => sum + (c.kpi.eScore || 85), 0) / companies.length;
-  const avgSScore = companies.reduce((sum, c) => sum + (c.kpi.sScore || 92), 0) / companies.length;
-  const avgGScore = companies.reduce((sum, c) => sum + (c.kpi.gScore || 78), 0) / companies.length;
-  // ESG Impact Score calculated but not used in current view
+  // ESG Impact Score calculation removed - not currently used in view
+  // const avgEScore = companies.reduce((sum, c) => sum + (c.kpi.eScore || 85), 0) / companies.length;
+  // const avgSScore = companies.reduce((sum, c) => sum + (c.kpi.sScore || 92), 0) / companies.length;
+  // const avgGScore = companies.reduce((sum, c) => sum + (c.kpi.gScore || 78), 0) / companies.length;
   // const esgImpactScore = (avgEScore * 0.5 + avgSScore * 0.3 + avgGScore * 0.2).toFixed(1);
 
   return (
