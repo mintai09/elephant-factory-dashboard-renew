@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -15,6 +15,7 @@ import { exportDashboardToPDF, exportToPNG } from '../utils/exportUtils';
 import * as XLSX from 'xlsx';
 
 function Dashboard() {
+  const navigate = useNavigate();
   const [sortBy, setSortBy] = useState('co2');
   const [isExporting, setIsExporting] = useState(false);
   const companies = getAllCompaniesSummary();
@@ -257,6 +258,33 @@ function Dashboard() {
               }}
             >
               {isExporting ? '⏳ 처리중...' : '🖼️ PNG 저장'}
+            </button>
+            <button
+              onClick={() => navigate('/survey')}
+              style={{
+                padding: '0.75rem 1.5rem',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '0.5rem',
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              📋 만족도 조사
             </button>
           </div>
         </div>

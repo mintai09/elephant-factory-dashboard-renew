@@ -16,6 +16,7 @@ import Signup from './components/Signup';
 import DataInsert from './components/DataInsert';
 import Chatbot from './components/Chatbot';
 import ChatbotPage from './components/ChatbotPage';
+import SatisfactionSurvey from './components/SatisfactionSurvey';
 
 function AppContent() {
   const location = useLocation();
@@ -36,6 +37,7 @@ function AppContent() {
         <Route path="/simulator" element={<ESGSimulator />} />
         <Route path="/data-insert" element={<DataInsert />} />
         <Route path="/chatbot" element={<ChatbotPage />} />
+        <Route path="/survey" element={<SatisfactionSurvey />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
       </Routes>
