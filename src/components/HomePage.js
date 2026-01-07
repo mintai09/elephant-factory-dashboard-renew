@@ -17,7 +17,7 @@ function HomePage() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [heroImages.length]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -40,7 +40,6 @@ function HomePage() {
   }, []);
 
   // Calculate real totals from companiesData.js
-  const totalParticipants = Object.values(companiesPerformance).reduce((sum, c) => sum + c.participants, 0);
   const totalCollection = Object.values(companiesPerformance).reduce((sum, c) => sum + c.collectionAmount, 0);
   const totalCO2 = Object.values(companiesPerformance).reduce((sum, c) => sum + c.co2Reduction, 0);
   const totalJobCreation = Object.values(companiesPerformance).reduce((sum, c) => sum + (c.jobCreation || 0), 0);
@@ -65,7 +64,8 @@ function HomePage() {
   const avgEScore = companies.reduce((sum, c) => sum + (c.kpi.eScore || 85), 0) / companies.length;
   const avgSScore = companies.reduce((sum, c) => sum + (c.kpi.sScore || 92), 0) / companies.length;
   const avgGScore = companies.reduce((sum, c) => sum + (c.kpi.gScore || 78), 0) / companies.length;
-  const esgImpactScore = (avgEScore * 0.5 + avgSScore * 0.3 + avgGScore * 0.2).toFixed(1);
+  // ESG Impact Score calculated but not used in current view
+  // const esgImpactScore = (avgEScore * 0.5 + avgSScore * 0.3 + avgGScore * 0.2).toFixed(1);
 
   return (
     <div>

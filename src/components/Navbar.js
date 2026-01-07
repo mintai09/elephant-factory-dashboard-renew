@@ -14,7 +14,8 @@ const accentRoutes = [
   },
   { match: (path) => path.startsWith('/companies') || path.startsWith('/company'), color: '#06B6D4' }, // 기업
   { match: (path) => path.startsWith('/simulator'), color: '#EC4899' }, // 시뮬레이터
-  { match: (path) => path.startsWith('/data-insert'), color: '#2563EB' } // 데이터 입력
+  { match: (path) => path.startsWith('/data-insert'), color: '#2563EB' }, // 데이터 입력
+  { match: (path) => path.startsWith('/chatbot'), color: '#10B981' } // AI 챗봇
 ];
 
 const lightenColor = (hex, amt = 28) => {
@@ -25,7 +26,7 @@ const lightenColor = (hex, amt = 28) => {
   const r = clamp((num >> 16) + amt);
   const g = clamp(((num >> 8) & 0x00ff) + amt);
   const b = clamp((num & 0x0000ff) + amt);
-  return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
 };
 
 function Navbar() {
@@ -75,6 +76,7 @@ function Navbar() {
 
   if (userInfo) {
     navItems.push({ to: '/data-insert', label: '데이터 입력' });
+    navItems.push({ to: '/chatbot', label: 'AI 챗봇' });
   }
 
   return (
