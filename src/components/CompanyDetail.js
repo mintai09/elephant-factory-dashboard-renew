@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -8,6 +8,7 @@ import { getCompanyData } from '../data/companiesData';
 import { exportToPDF, exportToExcel, exportToPNG } from '../utils/exportUtils';
 
 function CompanyDetail({ fixedCompanyId }) {
+  const navigate = useNavigate();
   const { companyId: urlCompanyId } = useParams();
   const companyId = fixedCompanyId || urlCompanyId;
   const data = getCompanyData(companyId);
@@ -720,7 +721,7 @@ function CompanyDetail({ fixedCompanyId }) {
           </div>
         )}
 
-        {/* 분기별 다운로드 버튼 */}
+        {/* 분기별 다운로드 버튼 및 만족도 조사 */}
         <div style={{
           display: 'flex',
           gap: '0.75rem',
@@ -750,6 +751,43 @@ function CompanyDetail({ fixedCompanyId }) {
             style={{ flex: '1', minWidth: '120px' }}
           >
             📊 Excel 다운로드
+          </button>
+          <button
+            onClick={() => navigate('/survey', {
+              state: {
+                companyId: companyId,
+                companyName: data.info.name,
+                quarter: getFilteredQuarterLabel()
+              }
+            })}
+            style={{
+              flex: '1',
+              minWidth: '120px',
+              padding: '0.75rem 1.5rem',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.5rem',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              transition: 'all 0.2s',
+              boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(102, 126, 234, 0.3)';
+            }}
+          >
+            📋 만족도 조사
           </button>
         </div>
 

@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function SatisfactionSurvey() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { companyId, companyName, quarter } = location.state || {};
+
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     overallSatisfaction: 0,
@@ -23,6 +26,9 @@ function SatisfactionSurvey() {
     // 만족도 조사 데이터를 localStorage에 저장 (실제로는 서버로 전송)
     const surveyData = {
       ...formData,
+      companyId,
+      companyName,
+      quarter,
       timestamp: new Date().toISOString(),
       userInfo: JSON.parse(localStorage.getItem('userInfo') || '{}')
     };
@@ -139,6 +145,11 @@ function SatisfactionSurvey() {
           <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', fontWeight: '700' }}>
             📋 만족도 조사
           </h1>
+          {companyName && quarter && (
+            <p style={{ fontSize: '1.25rem', marginBottom: '0.5rem', fontWeight: '600', opacity: 0.95 }}>
+              {companyName} - {quarter}
+            </p>
+          )}
           <p style={{ fontSize: '1.125rem', maxWidth: '800px', margin: '0 auto', lineHeight: '1.8' }}>
             프로그램 개선을 위해 여러분의 소중한 의견을 들려주세요
           </p>
