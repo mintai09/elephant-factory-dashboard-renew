@@ -172,15 +172,42 @@ function ProjectOverview() {
             {/* Tier 3 */}
             <div style={{ padding: '2rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', borderLeft: '6px solid #6B7280' }}>
               <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#6B7280' }}>
-                🏆 Tier 3: 통합 KPI (1개)
+                🏆 Tier 3: 통합 ESG 스코어 (1개)
               </h3>
               <p style={{ color: '#6B7280', marginBottom: '1.5rem' }}>
-                연간 평가, 대외 공시용
+                연간 평가, 대외 공시용 - 총 100점 만점
               </p>
-              <div style={{ padding: '1.5rem', backgroundColor: 'white', borderRadius: '0.375rem', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                <strong style={{ fontSize: '1.125rem', color: '#111827' }}>ESG 임팩트 스코어</strong>
-                <div style={{ marginTop: '1rem', fontSize: '0.875rem', color: '#6B7280' }}>
-                  = (E 점수 × 0.5) + (S 점수 × 0.3) + (G 점수 × 0.2)
+              <div style={{ padding: '1.5rem', backgroundColor: 'white', borderRadius: '0.375rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                <strong style={{ fontSize: '1.125rem', color: '#111827', display: 'block', marginBottom: '1.5rem' }}>ESG 임팩트 스코어 환산식</strong>
+
+                <div style={{ textAlign: 'left', marginBottom: '1.5rem' }}>
+                  <div style={{ padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.375rem', marginBottom: '0.75rem', borderLeft: '4px solid #10B981' }}>
+                    <div style={{ fontWeight: '600', color: '#059669', marginBottom: '0.5rem' }}>환경 (E): 50점</div>
+                    <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
+                      • 기본 참여 점수: 40점<br />
+                      • 실적 순위 가점: 최대 10점 (수거량 기준 상위 랭킹에 따라 차등)
+                    </div>
+                  </div>
+
+                  <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.375rem', marginBottom: '0.75rem', borderLeft: '4px solid #3B82F6' }}>
+                    <div style={{ fontWeight: '600', color: '#2563EB', marginBottom: '0.5rem' }}>사회 (S): 30점</div>
+                    <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
+                      • 일자리 창출: 15점 (코끼리공장 일자리 연결)<br />
+                      • 취약계층 지원: 15점 (기부 + 제품 구매로 아동 지원)
+                    </div>
+                  </div>
+
+                  <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.375rem', borderLeft: '4px solid #6B7280' }}>
+                    <div style={{ fontWeight: '600', color: '#4B5563', marginBottom: '0.5rem' }}>지배구조 (G): 20점</div>
+                    <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
+                      • 예산 지원함 = 20점<br />
+                      • 예산 지원 안 함 = 0점
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ fontSize: '0.875rem', color: '#9CA3AF', borderTop: '1px solid #E5E7EB', paddingTop: '1rem' }}>
+                  ※ 점수 산출 예시: 기본 E(40점) + 순위가점 E(8점) + 일자리 S(15점) + 지원 S(15점) + 예산 G(20점) = 총 98점 (A+ 등급)
                 </div>
               </div>
             </div>
