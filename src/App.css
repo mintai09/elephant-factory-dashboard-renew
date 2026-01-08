@@ -756,6 +756,41 @@ tr:hover {
   .section {
     padding: 0.875rem;
   }
+
+  /* 리스트 항목 폰트 크기 증가 (가독성) */
+  ul li, ol li {
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+
+  /* 카드 h3 폰트 증가 */
+  .card h3 {
+    font-size: 1rem !important;
+  }
+
+  /* 본문 텍스트 최소 크기 보장 */
+  p {
+    font-size: 0.9375rem;
+  }
+
+  /* inline-block 요소 전체 너비 사용 */
+  .badge, .btn-outline {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin: 0.5rem 0;
+  }
+
+  /* Hero section 통계 단일 컬럼 */
+  .hero-stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* 모든 flex 컨테이너 세로 정렬 */
+  div[style*="display: flex"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
 }
 
 /* 헤더 이미지 반응형 */
@@ -767,6 +802,28 @@ tr:hover {
 
   .page-header h1 {
     font-size: 1.75rem !important;
+  }
+
+  /* 리스트 아이템 폰트 크기 증가 */
+  ul li, ol li {
+    font-size: 0.9375rem;
+    line-height: 1.8;
+  }
+
+  /* 카드 내부 제목 크기 조정 */
+  .card h3 {
+    font-size: 1.125rem !important;
+  }
+
+  /* Grid 레이아웃 단순화 */
+  .hero-stats {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+
+  /* 버튼 그룹 세로 정렬 */
+  div[style*="display: flex"][style*="gap"] {
+    flex-wrap: wrap;
   }
 
   .page-header p {
@@ -931,4 +988,355 @@ tr:hover {
 
 .animate-on-scroll.animate-right {
   animation: fadeInRight 0.8s ease-out forwards;
+}
+
+/* ===== COMPREHENSIVE MOBILE UX/UI IMPROVEMENTS ===== */
+
+/* KogongjangOverview Mobile Optimization */
+@media (max-width: 768px) {
+  /* Social impact stats grid */
+  div[style*="gridTemplateColumns"][style*="minmax(200px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.25rem !important;
+  }
+
+  /* Partner cards grid */
+  div[style*="gridTemplateColumns"][style*="repeat(auto-fit"][style*="minmax(200px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Process steps grid */
+  div[style*="gridTemplateColumns"][style*="minmax(250px"] {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Donation guidelines - two column layout on tablet */
+  .card-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* All grids to single column on mobile */
+  div[style*="gridTemplateColumns"][style*="minmax(200px"] {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Hero section font sizes */
+  div[style*="minHeight"][style*="400px"] h1 {
+    font-size: 1.75rem !important;
+    line-height: 1.3 !important;
+  }
+
+  div[style*="minHeight"][style*="400px"] p {
+    font-size: 0.9375rem !important;
+    line-height: 1.6 !important;
+  }
+
+  div[style*="minHeight"][style*="400px"] br {
+    display: none;
+  }
+
+  /* Stat numbers smaller */
+  div[style*="fontSize"][style*="2.5rem"] {
+    font-size: 1.75rem !important;
+  }
+
+  div[style*="fontSize"][style*="3rem"][style*="marginBottom"] {
+    font-size: 2rem !important;
+  }
+
+  div[style*="fontSize"][style*="4rem"] {
+    font-size: 2.5rem !important;
+  }
+
+  /* Process flow arrows - make vertical */
+  div[style*="display: flex"][style*="justifyContent: center"][style*="flexWrap: wrap"] div:nth-child(even) {
+    transform: rotate(90deg);
+    font-size: 1.5rem !important;
+  }
+}
+
+/* ProjectOverview Tables Mobile Optimization */
+@media (max-width: 768px) {
+  /* Tier boxes */
+  div[style*="padding: 2rem"][style*="borderLeft: 6px solid"] {
+    padding: 1.25rem !important;
+  }
+
+  div[style*="padding: 2rem"][style*="borderLeft: 6px solid"] h3 {
+    font-size: 1.25rem !important;
+  }
+
+  /* Table wrapper */
+  .data-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ESG Score breakdown boxes */
+  div[style*="padding: 1rem"][style*="backgroundColor"][style*="borderRadius: 0.375rem"] {
+    padding: 0.875rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  /* Grading table */
+  table.data-table th:nth-child(3),
+  table.data-table td:nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Hide recommendation column on very small screens */
+  table.data-table th:nth-child(4),
+  table.data-table td:nth-child(4) {
+    display: none;
+  }
+
+  /* Tier KPI boxes - single column */
+  div[style*="gridTemplateColumns"][style*="minmax(220px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  div[style*="gridTemplateColumns"][style*="minmax(200px"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ESGSimulator Mobile Optimization */
+@media (max-width: 1024px) {
+  /* Force single column layout for form and results */
+  div[style*="gridTemplateColumns"][style*="results"][style*="1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Input form grid - partners to 2 columns */
+  div[style*="gridTemplateColumns: 1fr 1fr"] {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.875rem !important;
+  }
+
+  /* Result cards */
+  div[style*="gridTemplateColumns"][style*="repeat(3, 1fr)"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  /* ESG score display */
+  div[style*="fontSize"][style*="4rem"][style*="fontWeight: 700"] {
+    font-size: 3rem !important;
+  }
+
+  div[style*="fontSize"][style*="2rem"][style*="fontWeight: 700"][style*="marginBottom: 1rem"] {
+    font-size: 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Single column for partner inputs */
+  div[style*="gridTemplateColumns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ESG breakdown smaller */
+  div[style*="gridTemplateColumns"][style*="repeat(3, 1fr)"] div[style*="fontSize"][style*="2rem"] {
+    font-size: 1.5rem !important;
+  }
+
+  div[style*="gridTemplateColumns"][style*="repeat(3, 1fr)"] div[style*="fontSize"][style*="0.875rem"] {
+    font-size: 0.75rem !important;
+  }
+
+  /* Environmental indicators */
+  div[style*="gridTemplateColumns"][style*="repeat(3, 1fr)"] div[style*="fontSize"][style*="1.5rem"][style*="fontWeight: 700"] {
+    font-size: 1.25rem !important;
+  }
+
+  /* Input labels smaller */
+  label[style*="fontWeight: 600"] span[style*="fontSize"][style*="0.85rem"] {
+    display: block !important;
+    margin-top: 0.25rem !important;
+    margin-left: 0 !important;
+  }
+
+  /* Result section headings */
+  h3[style*="fontSize"][style*="1.25rem"] {
+    font-size: 1.125rem !important;
+  }
+
+  /* Smaller result breakdown text */
+  div[style*="fontSize"][style*="0.8rem"][style*="paddingLeft: 1rem"] {
+    font-size: 0.75rem !important;
+    padding-left: 0.5rem !important;
+  }
+}
+
+/* Chatbot Mobile Optimization */
+@media (max-width: 768px) {
+  /* Chatbot toggle button */
+  button[style*="position: fixed"][style*="bottom: 2rem"][style*="right: 2rem"] {
+    width: 56px !important;
+    height: 56px !important;
+    bottom: 1.5rem !important;
+    right: 1.5rem !important;
+    font-size: 1.5rem !important;
+  }
+
+  /* Chatbot window */
+  div[style*="position: fixed"][style*="bottom: 6rem"][style*="right: 2rem"] {
+    width: calc(100vw - 2rem) !important;
+    height: calc(100vh - 12rem) !important;
+    right: 1rem !important;
+    bottom: 5rem !important;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Full width chatbot on mobile */
+  div[style*="position: fixed"][style*="bottom: 6rem"][style*="right: 2rem"],
+  div[style*="position: fixed"][style*="bottom: 5rem"][style*="right: 1rem"] {
+    width: calc(100vw - 1.5rem) !important;
+    height: calc(100vh - 10rem) !important;
+    right: 0.75rem !important;
+    bottom: 4.5rem !important;
+    max-width: none !important;
+  }
+
+  /* Chatbot header */
+  div[style*="padding: 1.25rem"][style*="background: linear-gradient"] {
+    padding: 1rem !important;
+  }
+
+  div[style*="padding: 1.25rem"][style*="background: linear-gradient"] div[style*="fontSize: 1.125rem"] {
+    font-size: 1rem !important;
+  }
+
+  div[style*="padding: 1.25rem"][style*="background: linear-gradient"] div[style*="fontSize: 0.875rem"] {
+    font-size: 0.8125rem !important;
+  }
+
+  /* Chatbot messages */
+  div[style*="maxWidth: 80%"] {
+    max-width: 90% !important;
+    padding: 0.625rem 0.875rem !important;
+    font-size: 0.9375rem !important;
+  }
+
+  /* Chatbot input */
+  form[style*="padding: 1rem"] {
+    padding: 0.75rem !important;
+  }
+
+  form[style*="padding: 1rem"] input {
+    font-size: 0.875rem !important;
+    padding: 0.625rem !important;
+  }
+
+  form[style*="padding: 1rem"] button {
+    font-size: 0.875rem !important;
+    padding: 0.625rem 1rem !important;
+  }
+
+  /* Chatbot toggle button smaller */
+  button[style*="position: fixed"][style*="bottom: 2rem"][style*="right: 2rem"],
+  button[style*="position: fixed"][style*="bottom: 1.5rem"][style*="right: 1.5rem"] {
+    width: 52px !important;
+    height: 52px !important;
+    bottom: 1rem !important;
+    right: 1rem !important;
+    font-size: 1.375rem !important;
+  }
+}
+
+/* SatisfactionSurvey Mobile Optimization */
+@media (max-width: 768px) {
+  /* Survey form container */
+  form[style*="maxWidth: 800px"] {
+    padding: 2rem !important;
+  }
+
+  /* Star rating buttons */
+  button[style*="fontSize"][style*="2rem"] {
+    font-size: 1.75rem !important;
+    padding: 0.125rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Survey header */
+  div[style*="padding: 3rem 2rem"][style*="textAlign: center"] h1 {
+    font-size: 2rem !important;
+  }
+
+  div[style*="padding: 3rem 2rem"][style*="textAlign: center"] p {
+    font-size: 1rem !important;
+  }
+
+  /* Survey form */
+  form[style*="maxWidth: 800px"] {
+    padding: 1.5rem !important;
+  }
+
+  /* Star ratings */
+  button[style*="fontSize"][style*="2rem"] {
+    font-size: 1.5rem !important;
+  }
+
+  /* Text areas */
+  textarea[style*="padding: 0.875rem"] {
+    padding: 0.75rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  /* Submit button */
+  button[type="submit"][style*="padding: 0.875rem 2.5rem"] {
+    padding: 0.75rem 2rem !important;
+    font-size: 0.9375rem !important;
+  }
+
+  /* Thank you screen */
+  div[style*="fontSize"][style*="2rem"][style*="marginBottom: 1rem"] {
+    font-size: 1.75rem !important;
+  }
+}
+
+/* General inline-style overrides for mobile */
+@media (max-width: 480px) {
+  /* Reduce all large padding */
+  div[style*="padding: 3rem"] {
+    padding: 1.5rem !important;
+  }
+
+  div[style*="padding: 2rem"] {
+    padding: 1.25rem !important;
+  }
+
+  div[style*="padding: 1.5rem"] {
+    padding: 1rem !important;
+  }
+
+  /* Reduce large gaps */
+  div[style*="gap: 2rem"] {
+    gap: 1.25rem !important;
+  }
+
+  div[style*="gap: 1.5rem"] {
+    gap: 1rem !important;
+  }
+
+  /* Make large buttons full width */
+  a[style*="padding: 1.25rem 2.5rem"],
+  button[style*="padding: 1.25rem 2.5rem"] {
+    padding: 1rem 1.5rem !important;
+    width: 100%;
+    display: block !important;
+    text-align: center !important;
+  }
 }

@@ -1,0 +1,142 @@
+=== 홈페이지에서 제거된 섹션들 ===
+작성일: 2025-12-18
+목적: 홈페이지 간소화를 위해 제거. 필요시 복구 가능.
+
+=== 1. 신뢰할 수 있는 ESG 파트너 섹션 ===
+
+        {/* 신뢰성 및 투명성 섹션 - 새로 추가 */}
+        <section className="section animate-on-scroll">
+          <h2 className="section-title">✅ 신뢰할 수 있는 ESG 파트너</h2>
+          <p className="section-subtitle">
+            글로벌 ESG 기준 준수 및 투명한 성과 공유로 공신력 확보
+          </p>
+
+          <div className="card-grid">
+            <div className="card" style={{ textAlign: 'center', padding: '2rem' }}>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏅</div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '1rem', color: '#374151' }}>
+                글로벌 ESG 기준 자동 매핑
+              </h3>
+              <p style={{ color: '#6B7280', lineHeight: '1.8', marginBottom: '1rem' }}>
+                KCGS, MSCI, GRI 등 공식 평가체계에 자동 연동
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <span style={{ padding: '0.5rem 1rem', backgroundColor: '#F3F4F6', borderRadius: '0.5rem', fontSize: '0.875rem', fontWeight: '600' }}>KCGS</span>
+                <span style={{ padding: '0.5rem 1rem', backgroundColor: '#F3F4F6', borderRadius: '0.5rem', fontSize: '0.875rem', fontWeight: '600' }}>MSCI</span>
+                <span style={{ padding: '0.5rem 1rem', backgroundColor: '#F3F4F6', borderRadius: '0.5rem', fontSize: '0.875rem', fontWeight: '600' }}>GRI</span>
+                <span style={{ padding: '0.5rem 1rem', backgroundColor: '#F3F4F6', borderRadius: '0.5rem', fontSize: '0.875rem', fontWeight: '600' }}>CDP</span>
+              </div>
+            </div>
+
+            <div className="card" style={{ textAlign: 'center', padding: '2rem' }}>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🤝</div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '1rem', color: '#3B82F6' }}>
+                사회적기업 인증 파트너 100%
+              </h3>
+              <p style={{ color: '#6B7280', lineHeight: '1.8', marginBottom: '1rem' }}>
+                모든 파트너십은 KCGS G-4 기준 충족
+              </p>
+              <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#3B82F6' }}>100%</div>
+                <div style={{ fontSize: '0.875rem', color: '#1E40AF' }}>투명한 성과 공유 체계</div>
+              </div>
+            </div>
+
+            <div className="card" style={{ textAlign: 'center', padding: '2rem' }}>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📈</div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '1rem', color: '#F59E0B' }}>
+                지속 성장 중
+              </h3>
+              <p style={{ color: '#6B7280', lineHeight: '1.8', marginBottom: '1rem' }}>
+                전년 대비 35% 성장, 다음 분기 목표
+              </p>
+              <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
+                <div style={{ fontSize: '2rem', fontWeight: '700', color: '#F59E0B' }}>9,200kg</div>
+                <div style={{ fontSize: '0.875rem', color: '#92400E' }}>Q2 2025 수거량 목표</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+=== 2. ESG 트렌드 뉴스레터 구독 섹션 ===
+
+        {/* Secondary CTA - 뉴스레터 구독 섹션 */}
+        <section className="section">
+          <div className="card" style={{
+            background: 'linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%)',
+            padding: '3rem',
+            borderLeft: '6px solid #3B82F6'
+          }}>
+            <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+              <h2 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '1rem', color: '#111827', textAlign: 'center' }}>
+                📬 ESG 트렌드 뉴스레터 구독
+              </h2>
+              <p style={{ fontSize: '1.125rem', color: '#6B7280', marginBottom: '2rem', textAlign: 'center', lineHeight: '1.8' }}>
+                단순 소식지가 아닌, 장기 파트너십을 위한 필수 정보 채널
+              </p>
+
+              <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '0.75rem', marginBottom: '2rem' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1.5rem', color: '#111827' }}>
+                  구독 혜택
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                  <div style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem' }}>
+                    <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>📊</div>
+                    <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151' }}>분기별 ESG 트렌드 리포트</div>
+                  </div>
+                  <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
+                    <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>💡</div>
+                    <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1E40AF' }}>전문가 인사이트 제공</div>
+                  </div>
+                  <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
+                    <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🎁</div>
+                    <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#92400E' }}>신규 캠페인 사전 공개</div>
+                  </div>
+                  <div style={{ padding: '1rem', backgroundColor: '#FCE7F3', borderRadius: '0.5rem' }}>
+                    <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>💬</div>
+                    <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#831843' }}>파트너 인터뷰</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                <input
+                  type="email"
+                  placeholder="이메일 주소를 입력하세요"
+                  style={{
+                    flex: '1',
+                    minWidth: '250px',
+                    padding: '1rem',
+                    fontSize: '1rem',
+                    border: '2px solid #E5E7EB',
+                    borderRadius: '0.5rem',
+                    outline: 'none'
+                  }}
+                />
+                <button
+                  onClick={() => alert('뉴스레터 구독 신청이 완료되었습니다! 다음 분기 신규 캠페인 20% 할인 혜택을 받으실 수 있습니다.')}
+                  style={{
+                    padding: '1rem 2rem',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    backgroundColor: '#3B82F6',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  무료 구독하기
+                </button>
+              </div>
+
+              <p style={{ fontSize: '0.875rem', color: '#9CA3AF', marginTop: '1rem', textAlign: 'center' }}>
+                ⚡ 조기 신청 시 다음 캠페인 20% 할인 혜택!
+              </p>
+            </div>
+          </div>
+        </section>
+
+=== 복구 방법 ===
+필요시 이 파일의 내용을 HomePage.js의 적절한 위치에 복사하여 사용하세요.
