@@ -442,23 +442,31 @@ body {
 .table-container {
   overflow-x: auto;
   margin: 1rem 0;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 100%;
 }
 
 th, td {
   padding: 1rem;
   text-align: left;
   border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
 }
 
 th {
   background-color: var(--color-bg-light);
   font-weight: 600;
   color: var(--color-text-dark);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 tr:hover {
@@ -471,6 +479,7 @@ tr:hover {
   border-collapse: collapse;
   margin: 1rem 0;
   font-size: 0.875rem;
+  background-color: white;
 }
 
 .data-table th,
@@ -478,6 +487,7 @@ tr:hover {
   padding: 0.75rem;
   text-align: left;
   border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
 }
 
 .data-table th {
@@ -485,6 +495,9 @@ tr:hover {
   font-weight: 600;
   color: var(--color-text-dark);
   font-size: 0.875rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .data-table tr:hover {
@@ -618,24 +631,51 @@ tr:hover {
   .table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    margin: 1rem -1.5rem;
+    padding: 0 1.5rem;
   }
 
   table {
     font-size: 0.8125rem;
     min-width: 600px;
+    display: block;
+    overflow-x: auto;
   }
 
   th, td {
     padding: 0.75rem 0.5rem;
+    font-size: 0.8125rem;
   }
 
   .data-table {
     font-size: 0.8125rem;
+    display: block;
+    overflow-x: auto;
   }
 
   .data-table th,
   .data-table td {
     padding: 0.5rem;
+    font-size: 0.8125rem;
+  }
+
+  /* Card grid 모바일 최적화 */
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Main content 패딩 조정 */
+  .main-content {
+    padding: 1rem;
+  }
+
+  .section {
+    padding: 1rem;
+  }
+
+  .card {
+    padding: 1.25rem;
   }
 }
 
@@ -666,15 +706,55 @@ tr:hover {
   }
 
   .card {
-    padding: 1rem;
+    padding: 0.875rem;
+  }
+
+  /* 테이블 매우 작은 화면 최적화 */
+  .table-container {
+    margin: 1rem -0.875rem;
+    padding: 0 0.875rem;
   }
 
   table {
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
+    min-width: 500px;
   }
 
   th, td {
-    padding: 0.5rem 0.375rem;
+    padding: 0.5rem 0.25rem;
+    font-size: 0.6875rem;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.375rem 0.25rem;
+    font-size: 0.6875rem;
+  }
+
+  /* 버튼 그룹 모바일 최적화 */
+  .btn {
+    font-size: 0.8125rem;
+    padding: 0.5rem 0.875rem;
+  }
+
+  /* Grid 레이아웃 모바일 최적화 */
+  .stats-grid,
+  .card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem;
+  }
+
+  /* 네비게이션 패딩 최소화 */
+  .navbar-container {
+    padding: 0.5rem 0.875rem;
+  }
+
+  .main-content {
+    padding: 0.875rem;
+  }
+
+  .section {
+    padding: 0.875rem;
   }
 }
 
