@@ -627,13 +627,15 @@ export const companiesTier2KPI = {
 
 // 각 기업의 Tier 3 통합 KPI (ESG 임팩트 스코어)
 // 새로운 공식: E(50점) + S(30점) + G(20점) = 총 100점
+// 실적 순위 가점: 1등(10점), 2등(9점), 3등(7점), 4-5등(5점), 100등(4점), 그외(3점)
 export const companiesTier3KPI = {
   'comento': {
     // E 점수 (50점 만점): 기본 참여 40점 + 실적 순위 가점 최대 10점
-    eScore: 50, // 기본 40점 + 최상위 실적 10점 = 50점
+    eScore: 50, // 기본 40점 + 1등 10점 = 50점
     eBreakdown: {
       baseParticipation: 40, // 캠페인 참여 기본 점수
-      performanceBonus: 10, // 수거량 1위 (최대 가점)
+      performanceBonus: 10, // 수거량 1위 = 10점
+      ranking: 1,
       note: '월 7.43 tonnes 수거 (전체 기업 중 1위)'
     },
     // S 점수 (30점 만점): 일자리 창출 15점 + 취약계층 지원 15점
@@ -655,12 +657,13 @@ export const companiesTier3KPI = {
     gradeDescription: '탁월한 성과'
   },
   'sk-innovation': {
-    // E 점수: 기본 40점 + 실적 가점 8점
-    eScore: 48,
+    // E 점수: 기본 40점 + 2등 9점
+    eScore: 49,
     eBreakdown: {
       baseParticipation: 40,
-      performanceBonus: 8, // 수거량 2위
-      note: '월 5.2 tonnes 수거'
+      performanceBonus: 9, // 수거량 2위 = 9점
+      ranking: 2,
+      note: '월 5.2 tonnes 수거 (2위)'
     },
     // S 점수: 일자리 + 취약계층 지원
     sScore: 26,
@@ -675,18 +678,19 @@ export const companiesTier3KPI = {
       budgetSupport: 20,
       note: '코끼리공장 운영 예산 지원'
     },
-    // 총점: 48 + 26 + 20 = 94점
-    totalScore: 94,
+    // 총점: 49 + 26 + 20 = 95점
+    totalScore: 95,
     grade: 'A+', // 90-100점 → A+ 등급
     gradeDescription: '탁월한 성과'
   },
   'kewespo': {
-    // E 점수: 기본 40점 + 실적 가점 5점
-    eScore: 45,
+    // E 점수: 기본 40점 + 3등 7점
+    eScore: 47,
     eBreakdown: {
       baseParticipation: 40,
-      performanceBonus: 5, // 수거량 3위
-      note: '월 3.5 tonnes 수거'
+      performanceBonus: 7, // 수거량 3위 = 7점
+      ranking: 3,
+      note: '월 3.5 tonnes 수거 (3위)'
     },
     // S 점수
     sScore: 23,
@@ -701,18 +705,19 @@ export const companiesTier3KPI = {
       budgetSupport: 20,
       note: '코끼리공장 운영 예산 지원'
     },
-    // 총점: 45 + 23 + 20 = 88점
-    totalScore: 88,
-    grade: 'A', // 80-89점 → A 등급
-    gradeDescription: '우수'
+    // 총점: 47 + 23 + 20 = 90점
+    totalScore: 90,
+    grade: 'A+', // 90-100점 → A+ 등급
+    gradeDescription: '탁월한 성과'
   },
   'posco': {
-    // E 점수: 기본 40점 + 실적 가점 3점
-    eScore: 43,
+    // E 점수: 기본 40점 + 4등 5점
+    eScore: 45,
     eBreakdown: {
       baseParticipation: 40,
-      performanceBonus: 3, // 수거량 4위
-      note: '월 2.1 tonnes 수거'
+      performanceBonus: 5, // 수거량 4위 = 5점 (4-5등 범위)
+      ranking: 4,
+      note: '월 2.1 tonnes 수거 (4위)'
     },
     // S 점수
     sScore: 20,
@@ -727,8 +732,8 @@ export const companiesTier3KPI = {
       budgetSupport: 20,
       note: '코끼리공장 운영 예산 지원'
     },
-    // 총점: 43 + 20 + 20 = 83점
-    totalScore: 83,
+    // 총점: 45 + 20 + 20 = 85점
+    totalScore: 85,
     grade: 'A', // 80-89점 → A 등급
     gradeDescription: '우수'
   }

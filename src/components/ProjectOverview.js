@@ -185,7 +185,9 @@ function ProjectOverview() {
                     <div style={{ fontWeight: '600', color: '#059669', marginBottom: '0.5rem' }}>환경 (E): 50점</div>
                     <div style={{ fontSize: '0.875rem', color: '#6B7280' }}>
                       • 기본 참여 점수: 40점<br />
-                      • 실적 순위 가점: 최대 10점 (수거량 기준 상위 랭킹에 따라 차등)
+                      • 실적 순위 가점: 최대 10점<br />
+                      &nbsp;&nbsp;- 분기별 1등: 10점 | 2등: 9점 | 3등: 7점<br />
+                      &nbsp;&nbsp;- 4-5등: 5점 | 100등: 4점 | 그외: 3점
                     </div>
                   </div>
 
@@ -207,7 +209,7 @@ function ProjectOverview() {
                 </div>
 
                 <div style={{ fontSize: '0.875rem', color: '#9CA3AF', borderTop: '1px solid #E5E7EB', paddingTop: '1rem' }}>
-                  ※ 점수 산출 예시: 기본 E(40점) + 순위가점 E(8점) + 일자리 S(15점) + 지원 S(15점) + 예산 G(20점) = 총 98점 (A+ 등급)
+                  ※ 점수 산출 예시: 기본 E(40점) + 1등 가점 E(10점) + 일자리 S(14점) + 지원 S(14점) + 예산 G(20점) = 총 98점 (A+ 등급)
                 </div>
               </div>
             </div>

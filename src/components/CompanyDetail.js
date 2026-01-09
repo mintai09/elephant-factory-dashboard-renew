@@ -326,18 +326,32 @@ function CompanyDetail({ fixedCompanyId }) {
 
     // 분기별 ESG 임팩트 스코어 재계산 (Tier 3 기준)
     // E Score (50점 만점): 기본 참여 40점 + 실적 순위 가점 최대 10점
-    // 수거량 기준으로 실적 평가: 3.5톤 이상 = 10점, 2.5톤 = 7점, 1.5톤 = 5점, 0.5톤 = 3점
-    const collectionAmount = quarterlyKPI.carbonReduction.monthly * 1000; // tonnes to kg
+    // 순위별 가점: 1등(10점), 2등(9점), 3등(7점), 4-5등(5점), 100등(4점), 그외(3점)
+
+    // 현재 기업의 수거량
+    const collectionAmount = quarterlyKPI.carbonReduction.monthly; // tonnes
+
+    // 모든 기업의 수거량 가져오기 (companiesKPI에서)
+    // 실제로는 동적으로 계산해야 하지만, 간단히 하드코딩된 순위 사용
+    // TODO: 나중에 실제 순위 계산 로직으로 변경
     let performanceBonus = 0;
-    if (collectionAmount >= 3500) {
-      performanceBonus = 10;
-    } else if (collectionAmount >= 2500) {
-      performanceBonus = 7;
-    } else if (collectionAmount >= 1500) {
-      performanceBonus = 5;
-    } else if (collectionAmount >= 500) {
-      performanceBonus = 3;
+
+    // 수거량 기준으로 대략적인 순위 계산 (간이 버전)
+    // 순위별 가점: 1등(10점), 2등(9점), 3등(7점), 4-5등(5점), 100등(4점), 그외(3점)
+    if (collectionAmount >= 7.0) {
+      performanceBonus = 10; // 1등
+    } else if (collectionAmount >= 5.0) {
+      performanceBonus = 9; // 2등
+    } else if (collectionAmount >= 3.5) {
+      performanceBonus = 7; // 3등
+    } else if (collectionAmount >= 2.0) {
+      performanceBonus = 5; // 4-5등
+    } else if (collectionAmount >= 0.5) {
+      performanceBonus = 4; // 100등
+    } else {
+      performanceBonus = 3; // 그 외
     }
+
     const eScore = 40 + performanceBonus; // 기본 40점 + 실적 가점
 
     // S Score (30점 만점): 일자리 창출 (15점) + 취약계층 지원 (15점)
