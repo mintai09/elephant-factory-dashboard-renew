@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 import Navbar from './components/Navbar';
@@ -18,12 +18,24 @@ import Chatbot from './components/Chatbot';
 import ChatbotPage from './components/ChatbotPage';
 import SatisfactionSurvey from './components/SatisfactionSurvey';
 
+// 페이지 이동 시 스크롤을 최상단으로 리셋하는 컴포넌트
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 function AppContent() {
   const location = useLocation();
   const hideNavbar = ['/login', '/signup'].includes(location.pathname);
 
   return (
     <div className="App">
+      <ScrollToTop />
       {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<HomePage />} />
