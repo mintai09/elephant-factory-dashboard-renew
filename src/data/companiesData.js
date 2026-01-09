@@ -626,94 +626,111 @@ export const companiesTier2KPI = {
 };
 
 // 각 기업의 Tier 3 통합 KPI (ESG 임팩트 스코어)
+// 새로운 공식: E(50점) + S(30점) + G(20점) = 총 100점
 export const companiesTier3KPI = {
   'comento': {
-    // E 점수 (100점 만점) = (탄소절감 × 0.5) + (에너지절감 × 0.2) + (순환성 × 0.3)
-    eScore: 88, // (50점 × 0.5) + (20점 × 0.2) + (30점 × 0.3) = 88점
+    // E 점수 (50점 만점): 기본 참여 40점 + 실적 순위 가점 최대 10점
+    eScore: 50, // 기본 40점 + 최상위 실적 10점 = 50점
     eBreakdown: {
-      carbonReduction: 50, // 월 7.43 tonnes (목표 5.0 이상) → 50점
-      energySaving: 20, // 15,800 kWh (목표 15,000 이상) → 20점
-      circularity: 30 // 전환율 82% (목표 80% 이상) → 30점
+      baseParticipation: 40, // 캠페인 참여 기본 점수
+      performanceBonus: 10, // 수거량 1위 (최대 가점)
+      note: '월 7.43 tonnes 수거 (전체 기업 중 1위)'
     },
-    // S 점수 (100점 만점) = (교육참여 × 0.5) + (협력기관 × 0.5)
-    sScore: 85, // (45점 × 0.5) + (40점 × 0.5) = 85점
+    // S 점수 (30점 만점): 일자리 창출 15점 + 취약계층 지원 15점
+    sScore: 28, // 일자리 14점 + 아동지원 14점 = 28점
     sBreakdown: {
-      education: 45, // 교육 효과 지수 1500 (목표 1200 이상) → 45점
-      partnership: 40 // 협력 기관 12개 (목표 10 이상) → 40점
+      jobCreation: 14, // 코끼리공장 일자리 연결 (우수)
+      vulnerableSupport: 14, // 장난감 기부 + 제품 구매로 아동 지원 (우수)
+      note: '사회적 가치 200만원 창출'
     },
-    // G 점수 (100점 만점) = (자원가치 × 0.6) + (부가가치 × 0.4)
-    gScore: 82, // (42점 × 0.6) + (40점 × 0.4) = 82점
+    // G 점수 (20점 만점): 예산 지원함 = 20점, 지원 안 함 = 0점
+    gScore: 20, // 예산 지원함
     gBreakdown: {
-      resourceValue: 42, // 620,000원 (목표 500,000 이상) → 42점
-      upcyclingValue: 40 // 부가가치율 420% (목표 400% 이상) → 40점
+      budgetSupport: 20, // 캠페인 예산 지원
+      note: '코끼리공장 운영 예산 지원'
     },
-    // ESG 임팩트 스코어 (100점 만점) = (E × 0.5) + (S × 0.3) + (G × 0.2)
-    totalScore: 86, // (88 × 0.5) + (85 × 0.3) + (82 × 0.2) = 85.9 ≈ 86점
-    grade: 'S', // 80-100점 → S등급 (Superior)
-    gradeDescription: '탁월, 업계 최고 수준'
+    // ESG 임팩트 스코어 (100점 만점) = E(50점) + S(30점) + G(20점)
+    totalScore: 98, // 50 + 28 + 20 = 98점
+    grade: 'A+', // 90-100점 → A+ 등급
+    gradeDescription: '탁월한 성과'
   },
   'sk-innovation': {
-    eScore: 78,
+    // E 점수: 기본 40점 + 실적 가점 8점
+    eScore: 48,
     eBreakdown: {
-      carbonReduction: 45,
-      energySaving: 18,
-      circularity: 25
+      baseParticipation: 40,
+      performanceBonus: 8, // 수거량 2위
+      note: '월 5.2 tonnes 수거'
     },
-    sScore: 80,
+    // S 점수: 일자리 + 취약계층 지원
+    sScore: 26,
     sBreakdown: {
-      education: 40,
-      partnership: 35
+      jobCreation: 13,
+      vulnerableSupport: 13,
+      note: '사회적 가치 170만원 창출'
     },
-    gScore: 75,
+    // G 점수: 예산 지원함
+    gScore: 20,
     gBreakdown: {
-      resourceValue: 35,
-      upcyclingValue: 40
+      budgetSupport: 20,
+      note: '코끼리공장 운영 예산 지원'
     },
-    totalScore: 78, // (78 × 0.5) + (80 × 0.3) + (75 × 0.2) = 78.0점
-    grade: 'A', // 60-80점 → A등급 (Advanced)
-    gradeDescription: '우수, 선도적 활동'
+    // 총점: 48 + 26 + 20 = 94점
+    totalScore: 94,
+    grade: 'A+', // 90-100점 → A+ 등급
+    gradeDescription: '탁월한 성과'
   },
   'kewespo': {
-    eScore: 72,
+    // E 점수: 기본 40점 + 실적 가점 5점
+    eScore: 45,
     eBreakdown: {
-      carbonReduction: 40,
-      energySaving: 15,
-      circularity: 23
+      baseParticipation: 40,
+      performanceBonus: 5, // 수거량 3위
+      note: '월 3.5 tonnes 수거'
     },
-    sScore: 75,
+    // S 점수
+    sScore: 23,
     sBreakdown: {
-      education: 35,
-      partnership: 32
+      jobCreation: 12,
+      vulnerableSupport: 11,
+      note: '사회적 가치 140만원 창출'
     },
-    gScore: 70,
+    // G 점수: 예산 지원함
+    gScore: 20,
     gBreakdown: {
-      resourceValue: 32,
-      upcyclingValue: 35
+      budgetSupport: 20,
+      note: '코끼리공장 운영 예산 지원'
     },
-    totalScore: 72, // (72 × 0.5) + (75 × 0.3) + (70 × 0.2) = 72.5 ≈ 72점
-    grade: 'A', // 60-80점 → A등급 (Advanced)
-    gradeDescription: '우수, 선도적 활동'
+    // 총점: 45 + 23 + 20 = 88점
+    totalScore: 88,
+    grade: 'A', // 80-89점 → A 등급
+    gradeDescription: '우수'
   },
   'posco': {
-    eScore: 65,
+    // E 점수: 기본 40점 + 실적 가점 3점
+    eScore: 43,
     eBreakdown: {
-      carbonReduction: 35,
-      energySaving: 12,
-      circularity: 20
+      baseParticipation: 40,
+      performanceBonus: 3, // 수거량 4위
+      note: '월 2.1 tonnes 수거'
     },
-    sScore: 68,
+    // S 점수
+    sScore: 20,
     sBreakdown: {
-      education: 30,
-      partnership: 28
+      jobCreation: 10,
+      vulnerableSupport: 10,
+      note: '사회적 가치 110만원 창출'
     },
-    gScore: 68,
+    // G 점수: 예산 지원함
+    gScore: 20,
     gBreakdown: {
-      resourceValue: 28,
-      upcyclingValue: 35
+      budgetSupport: 20,
+      note: '코끼리공장 운영 예산 지원'
     },
-    totalScore: 66, // (65 × 0.5) + (68 × 0.3) + (68 × 0.2) = 66.5 ≈ 66점
-    grade: 'A', // 60-80점 → A등급 (Advanced)
-    gradeDescription: '우수, 선도적 활동'
+    // 총점: 43 + 20 + 20 = 83점
+    totalScore: 83,
+    grade: 'A', // 80-89점 → A 등급
+    gradeDescription: '우수'
   }
 };
 

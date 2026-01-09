@@ -324,32 +324,48 @@ function CompanyDetail({ fixedCompanyId }) {
       } : undefined
     } : null;
 
-    // 분기별 ESG 임팩트 스코어 재계산
-    // E Score: 탄소 저감 (50점 만점)
-    const carbonScore = Math.min(50, Math.round((quarterlyKPI.carbonReduction.monthly / 5.0) * 50));
-    const eScore = Math.max(30, carbonScore); // 최소 30점
+    // 분기별 ESG 임팩트 스코어 재계산 (Tier 3 기준)
+    // E Score (50점 만점): 기본 참여 40점 + 실적 순위 가점 최대 10점
+    // 수거량 기준으로 실적 평가: 3.5톤 이상 = 10점, 2.5톤 = 7점, 1.5톤 = 5점, 0.5톤 = 3점
+    const collectionAmount = quarterlyKPI.carbonReduction.monthly * 1000; // tonnes to kg
+    let performanceBonus = 0;
+    if (collectionAmount >= 3500) {
+      performanceBonus = 10;
+    } else if (collectionAmount >= 2500) {
+      performanceBonus = 7;
+    } else if (collectionAmount >= 1500) {
+      performanceBonus = 5;
+    } else if (collectionAmount >= 500) {
+      performanceBonus = 3;
+    }
+    const eScore = 40 + performanceBonus; // 기본 40점 + 실적 가점
 
-    // S Score: 사회적 임팩트 (100점 만점)
+    // S Score (30점 만점): 일자리 창출 (15점) + 취약계층 지원 (15점)
+    // 간단화: 사회적 가치를 기준으로 30점 만점 환산
     const socialValue = quarterlyKPI.socialImpact.monthlyValue || 0;
-    const sScore = Math.min(100, Math.max(0, Math.round((socialValue / 2000000) * 100)));
+    const sScore = Math.min(30, Math.max(0, Math.round((socialValue / 2000000) * 30)));
 
-    // G Score: 거버넌스는 동일 (분기별 변동 없음)
-    const gScore = tier3KPI ? tier3KPI.gScore : 82;
+    // G Score (20점 만점): 예산 지원함 = 20점, 지원 안 함 = 0점
+    // tier3KPI의 G 점수를 그대로 사용 (분기별 변동 없음)
+    const gScore = tier3KPI ? tier3KPI.gScore : 20;
 
-    // Total Score: E(40%) + S(40%) + G(20%)
-    const totalScore = Math.round((eScore * 0.4) + (sScore * 0.4) + (gScore * 0.2));
+    // Total Score (100점 만점): E(50%) + S(30%) + G(20%)
+    const totalScore = Math.round(eScore + sScore + gScore);
 
-    let grade = 'C';
-    let gradeDescription = '보통';
+    let grade = 'D';
+    let gradeDescription = '개선 필요';
     if (totalScore >= 90) {
-      grade = 'S';
-      gradeDescription = '최우수';
+      grade = 'A+';
+      gradeDescription = '탁월한 성과';
     } else if (totalScore >= 80) {
       grade = 'A';
       gradeDescription = '우수';
     } else if (totalScore >= 70) {
       grade = 'B';
       gradeDescription = '양호';
+    } else if (totalScore >= 60) {
+      grade = 'C';
+      gradeDescription = '보통';
     }
 
     const quarterlyTier3KPI = {
@@ -452,8 +468,10 @@ function CompanyDetail({ fixedCompanyId }) {
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '1.5rem',
-              background: tier3KPI.grade === 'S' ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' :
+              background: tier3KPI.grade === 'A+' ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' :
                           tier3KPI.grade === 'A' ? 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)' :
+                          tier3KPI.grade === 'B' ? 'linear-gradient(135deg, #059669 0%, #047857 100%)' :
+                          tier3KPI.grade === 'C' ? 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)' :
                           'linear-gradient(135deg, #6B7280 0%, #4B5563 100%)',
               borderRadius: '1rem',
               color: 'white',
@@ -695,8 +713,10 @@ function CompanyDetail({ fixedCompanyId }) {
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '1.5rem',
-              background: quarterlyTier3KPI.grade === 'S' ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' :
+              background: quarterlyTier3KPI.grade === 'A+' ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' :
                           quarterlyTier3KPI.grade === 'A' ? 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)' :
+                          quarterlyTier3KPI.grade === 'B' ? 'linear-gradient(135deg, #059669 0%, #047857 100%)' :
+                          quarterlyTier3KPI.grade === 'C' ? 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)' :
                           'linear-gradient(135deg, #6B7280 0%, #4B5563 100%)',
               borderRadius: '0.75rem',
               color: 'white'

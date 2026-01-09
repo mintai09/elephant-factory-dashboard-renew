@@ -807,10 +807,11 @@ function Dashboard() {
             {sortedCompanies.map(company => {
               const tier3 = companiesTier3KPI[company.id];
               const getGradeColor = (grade) => {
-                if (grade === 'S') return '#10B981';
+                if (grade === 'A+') return '#10B981';
                 if (grade === 'A') return '#3B82F6';
                 if (grade === 'B') return '#059669';
-                return '#F59E0B';
+                if (grade === 'C') return '#F59E0B';
+                return '#EF4444';
               };
 
               return (
@@ -856,10 +857,10 @@ function Dashboard() {
                     <div style={{ padding: '1rem', backgroundColor: '#F0FDF4', borderRadius: '0.5rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                         <div style={{ fontSize: '1rem', fontWeight: '600', color: '#065F46' }}>환경 (E)</div>
-                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10B981' }}>{tier3.eScore}점</div>
+                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10B981' }}>{tier3.eScore}/50점</div>
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>
-                        탄소저감 {tier3.eBreakdown.carbonReduction}점 | 에너지절감 {tier3.eBreakdown.energySaving}점 | 순환성 {tier3.eBreakdown.circularity}점
+                        기본 참여 {tier3.eBreakdown.baseParticipation}점 + 실적 가점 {tier3.eBreakdown.performanceBonus}점
                       </div>
                     </div>
 
@@ -867,10 +868,10 @@ function Dashboard() {
                     <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: '0.5rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                         <div style={{ fontSize: '1rem', fontWeight: '600', color: '#1E40AF' }}>사회 (S)</div>
-                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#3B82F6' }}>{tier3.sScore}점</div>
+                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#3B82F6' }}>{tier3.sScore}/30점</div>
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>
-                        교육참여 {tier3.sBreakdown.education}점 | 협력기관 {tier3.sBreakdown.partnership}점
+                        일자리 창출 {tier3.sBreakdown.jobCreation}점 + 취약계층 지원 {tier3.sBreakdown.vulnerableSupport}점
                       </div>
                     </div>
 
@@ -878,10 +879,10 @@ function Dashboard() {
                     <div style={{ padding: '1rem', backgroundColor: '#FEF3C7', borderRadius: '0.5rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                         <div style={{ fontSize: '1rem', fontWeight: '600', color: '#78350F' }}>경제 (G)</div>
-                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#F59E0B' }}>{tier3.gScore}점</div>
+                        <div style={{ fontSize: '1.5rem', fontWeight: '700', color: '#F59E0B' }}>{tier3.gScore}/20점</div>
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>
-                        자원가치 {tier3.gBreakdown.resourceValue}점 | 부가가치 {tier3.gBreakdown.upcyclingValue}점
+                        예산 지원함 = 20점
                       </div>
                     </div>
                   </div>
