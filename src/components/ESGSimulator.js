@@ -4,26 +4,26 @@ import { Link } from 'react-router-dom';
 function ESGSimulator() {
   const [formData, setFormData] = useState({
     // 기업 기본 정보
-    companyName: '',
-    industry: '',
+    companyName: '코멘토',
+    industry: '에듀테크',
 
     // 필수 입력: 폐기물 수거량 (kg)
-    wastePlasticPET: '',
-    wastePlasticHDPE: '',
-    toysReuse: '',
-    toysUpcycling: '',
-    toysRecycling: '',
+    wastePlasticPET: '650',
+    wastePlasticHDPE: '150',
+    toysReuse: '210',
+    toysUpcycling: '140',
+    toysRecycling: '90',
 
     // 필수 입력: 협력 네트워크 (개)
-    partnersCorporate: '',
-    partnersPublic: '',
-    partnersEducation: '',
-    partnersNPO: '',
+    partnersCorporate: '5',
+    partnersPublic: '3',
+    partnersEducation: '3',
+    partnersNPO: '1',
 
     // 필수 입력: 교육 도달 범위 (명)
-    educationEmployees: '',
-    educationPartners: '',
-    educationCommunity: ''
+    educationEmployees: '120',
+    educationPartners: '80',
+    educationCommunity: '100'
   });
 
   const [results, setResults] = useState(null);
