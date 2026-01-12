@@ -34,9 +34,16 @@ jobs:
           echo "REACT_APP_POTENS_ULID=${{ secrets.REACT_APP_POTENS_ULID }}" >> .env
           echo "REACT_APP_POTENS_MODEL=${{ secrets.REACT_APP_POTENS_MODEL }}" >> .env
           echo "REACT_APP_POTENS_API_URL=${{ secrets.REACT_APP_POTENS_API_URL }}" >> .env
+          echo "Created .env file:"
+          cat .env
 
       - name: Build project
         run: npm run build
+        env:
+          REACT_APP_POTENS_API_KEY: ${{ secrets.REACT_APP_POTENS_API_KEY }}
+          REACT_APP_POTENS_ULID: ${{ secrets.REACT_APP_POTENS_ULID }}
+          REACT_APP_POTENS_MODEL: ${{ secrets.REACT_APP_POTENS_MODEL }}
+          REACT_APP_POTENS_API_URL: ${{ secrets.REACT_APP_POTENS_API_URL }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
