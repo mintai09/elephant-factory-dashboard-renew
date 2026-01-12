@@ -70,14 +70,14 @@ function ChatbotPage() {
       // 응답 데이터에서 실제 메시지 추출
       let content = '응답을 받을 수 없습니다.';
 
-      if (data.data) {
+      if (data.message) {
+        content = data.message;
+      } else if (data.data) {
         content = data.data;
       } else if (data.result) {
         content = data.result;
       } else if (data.response) {
         content = data.response;
-      } else if (data.message) {
-        content = data.message;
       } else if (typeof data === 'string') {
         content = data;
       } else {
