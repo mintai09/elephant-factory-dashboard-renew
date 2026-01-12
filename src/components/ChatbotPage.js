@@ -45,7 +45,12 @@ function ChatbotPage() {
         throw new Error('API 설정이 누락되었습니다.');
       }
 
-      const response = await fetch(API_URL, {
+      // CORS 프록시를 사용 (프로덕션 환경)
+      const isProduction = window.location.hostname !== 'localhost';
+      const proxyUrl = isProduction ? 'https://corsproxy.io/?' : '';
+      const targetUrl = isProduction ? encodeURIComponent(API_URL) : API_URL;
+
+      const response = await fetch(`${proxyUrl}${targetUrl}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${API_KEY}`,
