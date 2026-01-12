@@ -47,14 +47,10 @@ function ChatbotPage() {
 
       // CORS 프록시를 사용 (프로덕션 환경)
       const isProduction = window.location.hostname !== 'localhost';
-      const finalUrl = isProduction
-        ? `https://api.allorigins.win/raw?url=${encodeURIComponent(API_URL)}`
-        : API_URL;
+      const proxyUrl = isProduction ? 'https://corsproxy.io/?' : '';
+      const targetUrl = isProduction ? encodeURIComponent(API_URL) : API_URL;
 
-      console.log('Request URL:', finalUrl);
-      console.log('Is Production:', isProduction);
-
-      const response = await fetch(finalUrl, {
+      const response = await fetch(`${proxyUrl}${targetUrl}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${API_KEY}`,
